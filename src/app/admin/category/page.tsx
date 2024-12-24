@@ -1,6 +1,8 @@
 const Category = () => {
     return ( 
-        <div>Category Page</div>
+        <div>Category Page
+            sample
+        </div>
      );
 }
  
