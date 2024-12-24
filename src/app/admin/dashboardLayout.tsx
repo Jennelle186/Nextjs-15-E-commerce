@@ -12,12 +12,10 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <div className="flex h-screen">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          <SidebarTrigger />
-          <main className="flex-1 p-4 overflow-auto">{children}</main>
-        </div>
+      <AppSidebar />
+      <div className="flex-1 flex flex-col">
+        <SidebarTrigger />
+        <main className="flex-1 p-4 overflow-auto">{children}</main>
       </div>
     </SidebarProvider>
   );

@@ -1,6 +1,7 @@
 import DashboardCard from "@/components/Dashboard/dashboardCard";
 import { Newspaper } from "lucide-react";
 import DashboardLayout from "./dashboardLayout";
+import OrderTable from "./orders/orderTable";
 
 const dashboard = () => {
   return (
@@ -13,8 +14,9 @@ const dashboard = () => {
       </div>
       {/* Add more content below the dashboard cards */}
       <div>
-        <h2 className="text-xl font-bold mb-4">Additional Content</h2>
         {/* Add children components for different pages here */}
+        {/* Tables for orders */}
+        <OrderTable title=" Latest Orders" />
       </div>
     </DashboardLayout>
   );
