@@ -1,10 +1,11 @@
 import BackButton from "@/components/backButton";
+import CategoryComponent from "./categoryForm";
 
 const Category = () => {
   return (
     <div>
       <BackButton text="Go Back" link="/admin" />
-      Category Page sample
+      <CategoryComponent />
     </div>
   );
 };

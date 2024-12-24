@@ -31,7 +31,7 @@ const items = [
   },
   {
     title: "Products",
-    url: "#",
+    url: "/admin/product",
     icon: FlipVertical,
   },
   {
