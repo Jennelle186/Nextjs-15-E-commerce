@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   categoryName: z.string().min(2, {
@@ -25,6 +26,8 @@ const formSchema = z.object({
 });
 
 const CategoryComponent = () => {
+  const { toast } = useToast();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,10 +38,23 @@ const CategoryComponent = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      console.log(values);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      toast({
+        title: "Success",
+        description: "Category has been submitted successfully.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Error",
+        description: "There was an error submitting the form.",
+      });
+    }
   }
 
   return (

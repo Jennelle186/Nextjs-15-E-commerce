@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   productName: z.string().min(2, {
@@ -22,14 +23,16 @@ const formSchema = z.object({
   productDescription: z.string().min(2, {
     message: "Please enter a description",
   }),
-  price: z.number().int({
-    message: "Please enter a valid number",
+  price: z.coerce.number({
+    required_error: "Price is required",
+    invalid_type_error: "Price must be a number",
   }),
   categoryID: z.string().min(2, {
     message: "Please pick a category",
   }),
-  stock: z.number().int({
-    message: "Please enter a valid number",
+  stock: z.coerce.number({
+    required_error: "Stocks are required",
+    invalid_type_error: "Stocks must be a number",
   }),
 });
 
@@ -39,6 +42,7 @@ interface FieldConfig {
   name: keyof FormSchema;
   label: string;
   placeholder: string;
+  type: string;
 }
 
 const fieldConfigs: FieldConfig[] = [
@@ -46,30 +50,37 @@ const fieldConfigs: FieldConfig[] = [
     name: "productName",
     label: "Product Name",
     placeholder: "Enter the product name",
+    type: "text",
   },
   {
     name: "productDescription",
     label: "Description",
     placeholder: "Enter the description of the product",
+    type: "text",
   },
   {
     name: "price",
     label: "Price",
     placeholder: "Enter the price",
+    type: "number",
   },
   {
     name: "categoryID",
     label: "Category",
     placeholder: "Select a category",
+    type: "text",
   },
   {
     name: "stock",
     label: "Stock",
     placeholder: "Enter stock quantity",
+    type: "number",
   },
 ];
 
 const ProductComponent = () => {
+  const { toast } = useToast();
+
   // 1. Define your form.
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -83,14 +94,26 @@ const ProductComponent = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: FormSchema) {
-    // Convert price and stock to numbers
-    values.price = Number(values.price);
-    values.stock = Number(values.stock);
+  async function onSubmit(values: FormSchema) {
+    try {
+      // Do something with the form values.
+      // ✅ This will be type-safe and validated.
+      console.log(values);
 
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+      // Simulate an API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      toast({
+        title: "Success",
+        description: "Product has been submitted successfully.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Error",
+        description: "There was an error submitting the form.",
+      });
+    }
   }
 
   return (
@@ -104,21 +127,15 @@ const ProductComponent = () => {
               name={fieldConfig.name}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{fieldConfig.label}</FormLabel>
+                  <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-white">
+                    {fieldConfig.label}
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      className="bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible: ring-offset-0"
                       placeholder={fieldConfig.placeholder}
                       {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(
-                          fieldConfig.name === "price" ||
-                            fieldConfig.name === "stock"
-                            ? Number(value)
-                            : value
-                        );
-                      }}
+                      type={fieldConfig.type}
                     />
                   </FormControl>
                   <FormMessage />
@@ -126,7 +143,7 @@ const ProductComponent = () => {
               )}
             />
           ))}
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Add Product</Button>
         </form>
       </Form>
     </div>
