@@ -19,7 +19,14 @@ const links = [
   { href: "/about", label: "About" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ session }: { session: any }) {
+  const isLoggedIn = !!session;
+
+  // Filter links based on authentication status
+  const accessibleLinks = isLoggedIn
+    ? links
+    : links.filter((link) => link.href === "/" || link.href === "/about");
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-14 items-center px-4 md:px-6">
@@ -45,7 +52,7 @@ export default function Navbar() {
               </MobileLink>
               <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
                 <div className="flex flex-col space-y-3">
-                  {links.map((link) => (
+                  {accessibleLinks.map((link) => (
                     <MobileLink
                       key={link.href}
                       href={link.href}
@@ -63,7 +70,7 @@ export default function Navbar() {
           </Link>
         </div>
         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          {links.map((link) => (
+          {accessibleLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -74,16 +81,29 @@ export default function Navbar() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <nav className="flex items-center">
-            <Link href="/login">
-              {" "}
-              <Button variant="ghost" className="hidden md:inline-flex">
-                Sign In
-              </Button>
-            </Link>
+          {/* If user is logged in or not */}
 
-            <Button className="hidden md:inline-flex">Sign Up</Button>
-          </nav>
+          {isLoggedIn ? (
+            <>
+              <h1>Log out..</h1>
+            </>
+          ) : (
+            <>
+              {" "}
+              <nav className="flex items-censter">
+                <Link href="/login">
+                  {" "}
+                  <Button variant="ghost" className="hidden md:inline-flex">
+                    Sign In
+                  </Button>
+                </Link>
+
+                <Link href="/sign-up">
+                  <Button className="hidden md:inline-flex">Sign Up</Button>
+                </Link>
+              </nav>
+            </>
+          )}
         </div>
       </div>
     </header>

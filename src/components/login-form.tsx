@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/form";
 import Link from "next/link";
 import { MailIcon } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { login } from "@/app/login/action";
+import { toast } from "@/hooks/use-toast";
 
 //z object for the username and password
 const formSchema = z.object({
@@ -45,8 +46,6 @@ const formSchema = z.object({
 export function LoginForm({
   className,
 }: React.ComponentPropsWithoutRef<"form">) {
-  const { toast } = useToast();
-
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,25 +55,26 @@ export function LoginForm({
     },
   });
 
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      console.log(values);
+      const { email, password } = data;
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Call the login function with the form data
+      // await login({ email, password });
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+
+      await login(formData);
 
       toast({
         title: "Success",
         description: "You have succesfully logged in. Redirecting...",
       });
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Error",
-        description: "There was an error submitting the form.",
-      });
+      console.log("error", error);
     }
-  }
+  };
 
   return (
     <Form {...form}>

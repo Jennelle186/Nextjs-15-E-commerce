@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import Navbar from "@/components/navbar";
+import NavbarWrapper from "@/components/NavBar/navBarWrapper";
+
+export const dynamic = "force-dynamic";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +33,7 @@ export default function RootLayout({
       >
         {" "}
         {/* Only use NavBarWrapper if there is authentication for admin */}
-        {/* <NavbarWrapper />  */}
-        <Navbar />
+        <NavbarWrapper />
         <main>{children}</main>
         <Toaster />
       </body>
