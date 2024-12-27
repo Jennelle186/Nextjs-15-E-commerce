@@ -79,11 +79,6 @@ export function SignUpComponent({
       });
     } catch (error) {
       console.log("error in the sign up component", error);
-
-      toast({
-        title: "Error",
-        description: "An unknown error occurred",
-      });
     }
   };
 
