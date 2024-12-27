@@ -10,9 +10,6 @@ export async function login(formData: FormData) {
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
-
-  console.log(formData, "formData");
-
   
   const data = {
     email: formData.get('email') as string,
@@ -29,22 +26,24 @@ export async function login(formData: FormData) {
   redirect('/')
 }
 
-export async function signup(formData: FormData) {
-  const supabase = await createClient()
+// export async function signup(formData: FormData) {
+//   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
+//   // Type-casting here for convenience
+//   // In practice, you should validate your inputs
+//   const data = {
+//     email: formData.get("email") as string,
+//     password: formData.get("password") as string,
+//   };
 
-  const { error } = await supabase.auth.signUp(data)
+//   const { error } =  await supabase.auth.signUp(data);
 
-  if (error) {
-    redirect('/error')
-  }
+//   if (error) {
+//     console.log(error.message, "error in sign up");
+//     return { success: false, message: error.message };
+//   }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
-}
+  
+
+//   return { success: true };
+// }

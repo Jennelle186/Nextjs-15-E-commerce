@@ -8,7 +8,6 @@ export default async function NavbarWrapper() {
     const { data: session, error } = await supabase.auth.getUser();
 
     if (error) {
-      console.error("Error fetching session:", error);
       return <Navbar session={null} />;
     }
 
