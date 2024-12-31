@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '../../../utils/supabase/server'
-import { z } from "zod";
+import { loginSchema } from './loginSchema';
 
 // export async function login(formData: FormData) {
 //   const supabase = await createClient()
@@ -22,16 +22,7 @@ import { z } from "zod";
 
 //   revalidatePath('/', 'layout')
 //   redirect('/')
-// }
-
-
-
-
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6), // Adjust the minimum length as needed
-});
+// 
 
 export const loginUser = async ({
   email,

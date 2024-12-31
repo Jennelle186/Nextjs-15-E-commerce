@@ -23,28 +23,7 @@ import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import GoogleSignIn from "./google";
-
-//z object for the username and password
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email",
-  }),
-  password: z
-    .string()
-    .min(6, { message: "Minimum 6 characters" })
-    .refine((password) => /[A-Z]/.test(password), {
-      message: "At least one uppercase letter",
-    })
-    .refine((password) => /[a-z]/.test(password), {
-      message: "At least one lowercase letter",
-    })
-    .refine((password) => /[0-9]/.test(password), {
-      message: "At least one number",
-    })
-    .refine((password) => /[!@#$%^&*]/.test(password), {
-      message: "At least one special character",
-    }),
-});
+import { loginSchema } from "./loginSchema";
 
 export function LoginForm({
   className,
@@ -53,15 +32,15 @@ export function LoginForm({
   const router = useRouter();
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (data: z.infer<typeof loginSchema>) => {
     setIsLoading(true); // Set loading to true when submission starts
 
     try {
