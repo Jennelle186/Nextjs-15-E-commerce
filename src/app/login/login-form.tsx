@@ -17,9 +17,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Link from "next/link";
-import { MailIcon } from "lucide-react";
-import { login } from "@/app/login/action";
+import { Loader2 } from "lucide-react";
+import { loginUser } from "@/app/login/action";
 import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import GoogleSignIn from "./google";
 
 //z object for the username and password
 const formSchema = z.object({
@@ -28,7 +31,7 @@ const formSchema = z.object({
   }),
   password: z
     .string()
-    .min(8, { message: "Minimum 8 characters" })
+    .min(6, { message: "Minimum 6 characters" })
     .refine((password) => /[A-Z]/.test(password), {
       message: "At least one uppercase letter",
     })
@@ -46,6 +49,9 @@ const formSchema = z.object({
 export function LoginForm({
   className,
 }: React.ComponentPropsWithoutRef<"form">) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,31 +61,43 @@ export function LoginForm({
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsLoading(true); // Set loading to true when submission starts
+
     try {
-      const { email, password } = data;
-
-      // Call the login function with the form data
-      // await login({ email, password });
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-
-      await login(formData);
-
-      toast({
-        title: "Success",
-        description: "You have succesfully logged in. Redirecting...",
+      const response = await loginUser({
+        email: data.email,
+        password: data.password,
       });
+
+      if (response.error) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong!",
+          description: `${response.message}`,
+        });
+      } else {
+        // Redirect to the homepage
+        router.push("/");
+      }
     } catch (error) {
-      console.log("error", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong!",
+        description: `${(error as Error).message}`,
+      });
+    } finally {
+      setIsLoading(false); // Set loading to false when submission ends
     }
   };
+
+  // pass the email value to forget password page
+  const email = form.getValues("email");
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className={cn("flex flex-col gap-6", className)}
       >
         <div className="flex flex-col items-center gap-2 text-center">
@@ -128,11 +146,25 @@ export function LoginForm({
           />
         </div>
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </>
+          ) : (
+            "Login"
+          )}
+        </Button>
 
         <div className="flex justify-center">
-          <Link href="#" className="text-sm underline-offset-4 hover:underline">
-            Forgot your password?
+          <Link
+            href={`/forgot-password${
+              email ? `?email=${encodeURIComponent(email)}` : ""
+            }`}
+            className="text-sm underline-offset-4 hover:underline"
+          >
+            Reset my password
           </Link>
         </div>
 
@@ -142,10 +174,12 @@ export function LoginForm({
           </span>
         </div>
 
-        <Button variant="outline" className="w-full">
+        {/* <Button variant="outline" className="w-full">
           <MailIcon />
           Login with Gmail
-        </Button>
+        </Button> */}
+
+        <GoogleSignIn />
 
         <div className="text-center text-sm">
           Don&apos;t have an account?{" "}

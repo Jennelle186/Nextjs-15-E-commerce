@@ -1,9 +1,8 @@
-import { LoginForm } from "@/components/login-form";
+import { LoginForm } from "@/app/login/login-form";
 import { ShoppingBag } from "lucide-react";
 import Image from "next/image";
 
 import Link from "next/link";
-// import { login, signup } from "./action";
 
 export default function LoginPage() {
   return (
@@ -29,7 +28,8 @@ export default function LoginPage() {
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
           fill
-          priority
+          priority={false}
+          loading="lazy"
         />
       </div>
     </div>
