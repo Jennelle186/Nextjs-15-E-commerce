@@ -143,7 +143,7 @@ export function LoginForm({
             }`}
             className="text-sm underline-offset-4 hover:underline"
           >
-            Reset my password
+            Forgot Password?
           </Link>
         </div>
 
