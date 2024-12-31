@@ -17,68 +17,66 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Link from "next/link";
-import { MailIcon, ShoppingBag } from "lucide-react";
+import { Loader2, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { toast } from "@/hooks/use-toast";
-import { signup } from "./action";
+import { registerUser } from "./action";
+import { passwordMatchSchema } from "../../../validation/passwordMatchSchema";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import GoogleSignIn from "../login/google";
 
 //z object for the username and password
 const formSchema = z
   .object({
-    email: z.string().email({
-      message: "Please enter a valid email",
-    }),
-    password: z
-      .string()
-      .min(6, { message: "Minimum 6 characters" })
-      .refine((password) => /[A-Z]/.test(password), {
-        message: "At least one uppercase letter",
-      })
-      .refine((password) => /[a-z]/.test(password), {
-        message: "At least one lowercase letter",
-      })
-      .refine((password) => /[0-9]/.test(password), {
-        message: "At least one number",
-      })
-      .refine((password) => /[!@#$%^&*]/.test(password), {
-        message: "At least one special character",
-      }),
-    confirmPassword: z.string(),
+    email: z.string().email(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"], // Set the path of the error
-  });
+  .and(passwordMatchSchema);
 
 export function SignUpComponent({
   className,
 }: React.ComponentPropsWithoutRef<"form">) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
+      passwordConfirm: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsLoading(true); // Set loading to true when submission starts
+
     try {
-      const { email, password } = data;
-
-      // Call the login function with the form data
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-
-      await signup(formData);
-
-      toast({
-        title: "Account created",
-        description: "Please check your email to confirm your account. ",
+      const response = await registerUser({
+        email: data.email,
+        password: data.password,
+        passwordConfirm: data.passwordConfirm,
       });
+
+      if (response.error) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong!",
+          description: `${response.message}`,
+        });
+      } else {
+        // Redirect to the confirmation page
+        router.push("/sign-up/confirmation");
+      }
     } catch (error) {
-      console.log("error in the sign up component", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong!",
+        description: `${(error as Error).message}`,
+      });
+    } finally {
+      setIsLoading(false); // Set loading to false when submission ends
     }
   };
 
@@ -106,7 +104,7 @@ export function SignUpComponent({
           <div className="w-full max-w-xs">
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(handleSubmit)}
                 className={cn("flex flex-col gap-6", className)}
               >
                 <div className="flex flex-col items-center gap-2 text-center">
@@ -158,7 +156,7 @@ export function SignUpComponent({
                 <div className="grid gap-2">
                   <FormField
                     control={form.control}
-                    name="confirmPassword"
+                    name="passwordConfirm"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Confirm Password</FormLabel>
@@ -175,7 +173,16 @@ export function SignUpComponent({
                   />
                 </div>
 
-                <Button type="submit">Submit</Button>
+                <Button>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </>
+                  ) : (
+                    "Register"
+                  )}
+                </Button>
 
                 <div className="flex justify-center">
                   <Link
@@ -192,10 +199,7 @@ export function SignUpComponent({
                   </span>
                 </div>
 
-                <Button variant="outline" className="w-full">
-                  <MailIcon />
-                  Login with Gmail
-                </Button>
+                <GoogleSignIn />
 
                 <div className="text-center text-sm">
                   Already have an account?
