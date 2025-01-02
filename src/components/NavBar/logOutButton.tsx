@@ -1,6 +1,17 @@
 import { createClient } from "../../../utils/supabase/client";
-import { Button } from "../ui/button";
 import { toast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "../ui/button";
 
 const LogoutButton = () => {
   const signOut = async () => {
@@ -24,9 +35,26 @@ const LogoutButton = () => {
   };
 
   return (
-    <form action={signOut}>
-      <Button type="submit">Logout</Button>
-    </form>
+    <AlertDialog>
+      <AlertDialogTrigger>
+        <Button>Logout</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure you want to logout?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You will be logged out of your account. You can log back in anytime
+            to access your data.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <form action={signOut}>
+            <AlertDialogAction type="submit">Logout</AlertDialogAction>
+          </form>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
