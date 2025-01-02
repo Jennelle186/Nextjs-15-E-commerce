@@ -11,7 +11,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "../ui/button";
 
 const LogoutButton = () => {
   const signOut = async () => {
@@ -36,9 +35,7 @@ const LogoutButton = () => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
-        <Button>Logout</Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger>Logout</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure you want to logout?</AlertDialogTitle>
