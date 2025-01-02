@@ -1,12 +1,23 @@
-export interface Product {
+export interface Author {
     id: string;
-    productName: string;
-    productDescription: string;
-    price: number;
-    categoryID: string; // ID of the category the product belongs to
-    createdAt: Date;
-    updatedAt: Date;
-    stock: number;
-    images?: string[]; // Array of image URLs
-    isActive: boolean;
-}
+    last_name: string;
+    first_name: string;
+    middle_name: string;
+  }
+
+  export interface Book {
+    ISBN: string;
+    length: number;
+    width: number;
+    height: number;
+    publisher: string;
+    publicationDate: string; // Use string to represent the date
+    pages: number;
+    genre: string; // You can also use a Genre interface if you have one
+    author: Author; // Reference the Author interface
+    signed: boolean;
+    format: string;
+    dCoded: boolean;
+    edition: string;
+    productLanguage: string;
+  }

@@ -11,6 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import LogoutButton from "./logOutButton";
 
 const links = [
   { href: "/", label: "Home" },
@@ -84,9 +85,7 @@ export default function Navbar({ session }: { session: any }) {
           {/* If user is logged in or not */}
 
           {isLoggedIn ? (
-            <>
-              <h1>Log out..</h1>
-            </>
+            <LogoutButton />
           ) : (
             <>
               {" "}
