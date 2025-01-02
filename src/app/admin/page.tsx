@@ -46,7 +46,7 @@ const dashboard = async () => {
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row justify-between gap-2 mb-2 p-2">
+      <div className="flex flex-col md:flex-row justify-between gap-2 p-2">
         <DashboardCard title="Orders" value={100} icon={<Newspaper />} />
         <DashboardCard title="Users" value={100} icon={<Newspaper />} />
         <DashboardCard title="Orders" value={100} icon={<Newspaper />} />

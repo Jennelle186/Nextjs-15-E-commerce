@@ -25,8 +25,8 @@ const items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Categories",
-    url: "/admin/category",
+    title: "Manage Authors",
+    url: "/admin/author",
     icon: FlipVertical,
   },
   {
