@@ -1,9 +1,9 @@
 export interface User {
     id: string;
+    fullName: string;
     email: string;
-    name: string;
-    createdAt: Date;
-    updatedAt: Date;
+    username:string;
+    updated_at: Date;
     address?: {
         street: string;
         city: string;
@@ -11,8 +11,5 @@ export interface User {
         postalCode: string;
         country: string;
     };
-    role: 'user' | 'admin';
-    isActive: boolean;
-    orders?: string[]; // Array of order IDs
     phoneNumber?: string;
 }

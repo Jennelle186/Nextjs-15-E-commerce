@@ -1,17 +1,25 @@
-" user server";
-
-import { redirect } from "next/navigation";
-import { createClient } from "../../../utils/supabase/server";
+import { createClient } from "../../../utils/supabase/client";
 import { Button } from "../ui/button";
+import { toast } from "@/hooks/use-toast";
 
 const LogoutButton = () => {
   const signOut = async () => {
     try {
+      console.log("clicked. signing out");
       const supabase = createClient();
-      (await supabase).auth.signOut();
-      redirect("/login");
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw new Error(error.message);
+      }
+      // redirect("/login");
+      window.location.reload(); // Refresh the page after redirecting
     } catch (error) {
       console.error("Error signing out:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: (error as Error).message ?? "An unexpected error occurred",
+      });
     }
   };
 
