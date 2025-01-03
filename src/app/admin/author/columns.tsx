@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { handleDeleteAuthor } from "./action";
 import { toast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 export const columns: ColumnDef<Author>[] = [
   {
@@ -103,11 +104,11 @@ export const columns: ColumnDef<Author>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => console.log(author.id, "author id edit")}
-            >
-              <SquarePen className="text-green-" /> Edit author
-            </DropdownMenuItem>
+            <Link href={`/admin/author/${author.id}/edit`}>
+              <DropdownMenuItem>
+                <SquarePen className="text-green-" /> Edit author
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
             <AlertDialog>
               <AlertDialogTrigger>
