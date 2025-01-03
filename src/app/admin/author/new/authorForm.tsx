@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 const AuthorForm = () => {
   const [state, action, pending] = useActionState(addAuthor, undefined);
@@ -96,7 +97,14 @@ const AuthorForm = () => {
           )}
         />
         <Button disabled={pending} type="submit">
-          Submit
+          {pending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </>
+          ) : (
+            "Submit"
+          )}
         </Button>
       </form>
     </Form>
