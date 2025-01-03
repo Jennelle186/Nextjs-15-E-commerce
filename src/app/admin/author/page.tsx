@@ -24,9 +24,9 @@ const AuthorList = async () => {
   }
   const authors = data.map((author) => ({
     id: author.id,
-    first_name: author.firstName,
-    last_name: author.lastName,
-    middle_name: author.middleName,
+    firstName: author.firstName,
+    lastName: author.lastName,
+    middleName: author.middleName,
   }));
 
   return <AuthorListComponent authors={authors as Author[]} />;
