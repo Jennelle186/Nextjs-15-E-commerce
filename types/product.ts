@@ -1,8 +1,8 @@
 export interface Author {
     id: string;
-    last_name: string;
-    first_name: string;
-    middle_name: string;
+    lastName: string;
+    firstName: string;
+    middleName: string;
   }
 
   export interface Book {

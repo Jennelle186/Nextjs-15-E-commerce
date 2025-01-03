@@ -32,10 +32,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { handleDeleteAuthor } from "./action";
 import { toast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 export const columns: ColumnDef<Author>[] = [
   {
-    accessorKey: "last_name",
+    accessorKey: "lastName",
     header: ({ column }) => {
       return (
         <Button
@@ -47,16 +48,16 @@ export const columns: ColumnDef<Author>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div>{row.getValue("last_name")}</div>,
+    cell: ({ row }) => <div>{row.getValue("lastName")}</div>,
   },
   {
     header: "First Name",
-    accessorKey: "first_name",
+    accessorKey: "firstName",
   },
 
   {
     header: "Middle Name",
-    accessorKey: "middle_name",
+    accessorKey: "middleName",
   },
   {
     id: "actions",
@@ -103,11 +104,11 @@ export const columns: ColumnDef<Author>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => console.log(author.id, "author id edit")}
-            >
-              <SquarePen className="text-green-" /> Edit author
-            </DropdownMenuItem>
+            <Link href={`/admin/author/${author.id}/edit`}>
+              <DropdownMenuItem>
+                <SquarePen className="text-green-" /> Edit author
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
             <AlertDialog>
               <AlertDialogTrigger>
@@ -122,7 +123,7 @@ export const columns: ColumnDef<Author>[] = [
                   <AlertDialogDescription>
                     This action cannot be undone. This will permanently delete
                     the information of the author{" "}
-                    {author.first_name + " " + author.last_name}
+                    {author.firstName + " " + author.lastName}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

@@ -13,6 +13,7 @@ export const authorSchema = z.object({
     .string()
     .max(50, { message: 'Middle name must be at most 50 characters' })
     .optional(),
+  id: z.string().optional()
 })
 
 export type AuthorFormState =
@@ -21,6 +22,7 @@ export type AuthorFormState =
         firstName?: string[]
         lastName?: string[]
         middleName?: string[]
+        id?:string[]
       }
       message?: string
     }
