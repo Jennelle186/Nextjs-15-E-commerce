@@ -3,6 +3,21 @@
 import { createClient } from "../../../../utils/supabase/server"
 import { AuthorFormState, authorSchema } from "../../../../validation/authorSchema";
 
+//fetch all authors
+export async function fetchAllAuthors(){
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+  .from("authors")
+  .select("id,firstName,lastName,middleName");
+
+  if(error){
+    return null;
+  }
+
+  return data
+}
+
 //fetch specific author
 export async function fetchAuthors(id:string){
     const supabase = createClient()

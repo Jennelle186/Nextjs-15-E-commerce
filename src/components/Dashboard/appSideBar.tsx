@@ -30,8 +30,8 @@ const items = [
     icon: FlipVertical,
   },
   {
-    title: "Products",
-    url: "/admin/product",
+    title: "Manage Books",
+    url: "/admin/books",
     icon: FlipVertical,
   },
   {
