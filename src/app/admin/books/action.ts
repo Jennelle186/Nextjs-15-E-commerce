@@ -64,3 +64,35 @@ export async function addBook(state: BookFormState, formData: FormData) {
   };
 
 }
+
+//fetch all books
+export async function fetchAllBooks(id: string){
+  const supabase = await createClient();
+
+    //retrieve all of the books from the database
+    const { data, error } = await supabase
+    .from("books")
+    .select("*, authors(firstName, lastName, middleName)").eq('isbn',id);
+
+
+  if(error){
+    return null;
+  }
+
+  return data
+}
+
+//delete book
+export async function handleDeleteBook(id: string){
+  const supabase = createClient();
+
+  const { error } = await (await supabase).from('books').delete().eq('isbn', id).select()
+
+
+  if(error){
+      console.log(error,"error in the action.ts delete book")       
+      return {success: false, message:error.message}
+  }
+
+  return {success: true, message: "Book deleted succesfully"}  
+}
