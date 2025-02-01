@@ -63,6 +63,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
       format: "Paperback",
       edition: "1st",
       productLanguage: "English",
+      stocks: 0,
     },
   });
 
@@ -413,6 +414,28 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="stocks"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Stocks</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      {...field}
+                      onChange={(e) => field.onChange(+e.target.value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  {state?.errors?.length && (
+                    <FormDescription>{state.errors.length}</FormDescription>
+                  )}
+                </FormItem>
+              )}
+            />
 
             <Button disabled={pending} type="submit" className="w-full">
               {pending ? (
