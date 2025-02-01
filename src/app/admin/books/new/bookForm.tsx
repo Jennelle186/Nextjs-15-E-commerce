@@ -64,6 +64,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
       edition: "1st",
       productLanguage: "English",
       stocks: 0,
+      title: "",
     },
   });
 
@@ -216,6 +217,23 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter book title" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                  {state?.errors?.title && (
+                    <FormDescription>{state.errors.title}</FormDescription>
+                  )}
+                </FormItem>
+              )}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormField
@@ -431,7 +449,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                   </FormControl>
                   <FormMessage />
                   {state?.errors?.length && (
-                    <FormDescription>{state.errors.length}</FormDescription>
+                    <FormDescription>{state.errors.stocks}</FormDescription>
                   )}
                 </FormItem>
               )}

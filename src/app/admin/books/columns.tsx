@@ -25,6 +25,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, SquarePen, Trash2Icon } from "lucide-react";
+import Link from "next/link";
+import { handleDeleteBook } from "./action";
+import { toast } from "@/hooks/use-toast";
 
 export const columns: ColumnDef<Book>[] = [
   {
@@ -114,6 +117,36 @@ export const columns: ColumnDef<Book>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const book = row.original;
+      const id = book.isbn;
+
+      //delete function
+      const handleDelete = async (id: string) => {
+        console.log(id, "id in the handle Delete");
+        if (id) {
+          try {
+            //implementing the handleDeleteAuthor from the action.ts
+            const response = await handleDeleteBook(id);
+            if (response.success) {
+              toast({
+                title: "Success",
+                description: response.message,
+              });
+              window.location.reload();
+            } else {
+              toast({
+                title: "Error",
+                description: response.message,
+              });
+            }
+          } catch (error) {
+            console.error("Error deleting author:", error);
+            toast({
+              title: "Error",
+              description: "An unexpected error occurred",
+            });
+          }
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -125,11 +158,11 @@ export const columns: ColumnDef<Book>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <Link href={`/admin/author/${author.id}/edit`}> */}
-            <DropdownMenuItem>
-              <SquarePen className="text-green-" /> Edit book
-            </DropdownMenuItem>
-            {/* </Link> */}
+            <Link href={`/admin/books/${id}/edit`}>
+              <DropdownMenuItem>
+                <SquarePen className="text-green-" /> Edit Book
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
             <AlertDialog>
               <AlertDialogTrigger>
@@ -148,9 +181,7 @@ export const columns: ColumnDef<Book>[] = [
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                  // onClick={() => handleDelete(author.id)}
-                  >
+                  <AlertDialogAction onClick={() => handleDelete(id)}>
                     Yes, delete book
                   </AlertDialogAction>
                 </AlertDialogFooter>
