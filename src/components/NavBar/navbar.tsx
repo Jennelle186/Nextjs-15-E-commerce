@@ -1,135 +1,164 @@
 "use client";
 
-import * as React from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Menu, X, ChevronDown } from "lucide-react";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+import { Pacifico } from "next/font/google";
 import LogoutButton from "./logOutButton";
 
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/profile", label: "Profile" },
-  { href: "/orders", label: "My Orders" },
-  { href: "/about", label: "About" },
-];
+const pacifico = Pacifico({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-pacifico",
+});
 
-export default function Navbar({ session }: { session: any }) {
+type NavItem = {
+  name: string;
+  href: string;
+  subItems?: { name: string; href: string }[];
+};
+
+const navItems: NavItem[] = [
+  { name: "Home", href: "/" },
+  { name: "Profile", href: "/profile" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+];
+const NavBar = ({ session }: { session: any }) => {
   const isLoggedIn = !!session;
 
-  // Filter links based on authentication status
-  const accessibleLinks = isLoggedIn
-    ? links
-    : links.filter((link) => link.href === "/" || link.href === "/about");
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const accessibleNavItems = isLoggedIn
+    ? navItems
+    : navItems.filter((item) => item.href === "/" || item.href === "/about");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/6">
-      <div className="flex h-14 items-center px-4 md:px-6">
-        <div className="flex flex-1">
-          <Sheet>
-            <SheetTitle></SheetTitle>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="pr-0">
-              <MobileLink
-                href="/"
-                className="flex items-center"
-                onOpenChange={() => {}}
-              >
-                Book Haven
-              </MobileLink>
-              <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
-                <div className="flex flex-col space-y-3">
-                  {accessibleLinks.map((link) => (
-                    <MobileLink
-                      key={link.href}
-                      href={link.href}
-                      onOpenChange={() => {}}
-                    >
-                      {link.label}
-                    </MobileLink>
-                  ))}
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            Book Haven
-          </Link>
-        </div>
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          {accessibleLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6 }}
+      className={cn(
+        "fixed w-full z-50 transition-all duration-300",
+        isScrolled ? "bg-white shadow-md py-2" : "bg-transparent py-4"
+      )}
+    >
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center">
+          <Link
+            href="/"
+            className={` text-2xl font-bold transition-all duration-300 hover:scale-105`}
+          >
+            <span
+              className={cn(
+                isScrolled
+                  ? "bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-rose-300"
+                  : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white/90 to-rose-300 ",
+                pacifico.className
+              )}
             >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          {/* If user is logged in or not */}
-
-          {isLoggedIn ? (
-            <LogoutButton />
-          ) : (
-            <>
-              {" "}
-              <nav className="flex items-censter">
-                <Link href="/login">
-                  {" "}
-                  <Button variant="ghost" className="hidden md:inline-flex">
-                    Sign In
-                  </Button>
+              BookHaven
+            </span>
+          </Link>
+          <div className="hidden md:flex space-x-8 items-center">
+            {accessibleNavItems.map((item) => (
+              <div key={item.name} className="relative group">
+                <Link
+                  href={item.href}
+                  className={cn(
+                    ` text-sm transition-colors duration-300 group-hover:text-rose-300`,
+                    isScrolled ? "text-gray-700" : "text-white",
+                    "flex items-center"
+                  )}
+                >
+                  {item.name}
+                  {item.subItems && <ChevronDown className="ml-1 h-4 w-4" />}
                 </Link>
-
-                <Link href="/sign-up">
-                  <Button className="hidden md:inline-flex">Sign Up</Button>
-                </Link>
-              </nav>
-            </>
-          )}
+              </div>
+            ))}
+          </div>
+          <div className="hidden md:block">
+            {isLoggedIn ? (
+              <LogoutButton />
+            ) : (
+              <Link href="/login">
+                <Button
+                  className={cn(
+                    ` bg-[#3D0C11] text-white hover:bg-[#2D090D] transition-all duration-300`,
+                    !isScrolled &&
+                      "bg-white/10 backdrop-blur-sm hover:bg-white/20",
+                    "hover:scale-105"
+                  )}
+                >
+                  Login
+                </Button>
+              </Link>
+            )}
+          </div>
+          <button
+            className="md:hidden text-white transition-transform duration-300 hover:scale-110"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
-    </header>
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden absolute top-full left-0 right-0 shadow-md overflow-hidden bg-white/30 backdrop-blur-md"
+          >
+            <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
+              {accessibleNavItems.map((item) => (
+                <div key={item.name}>
+                  <Link
+                    href={item.href}
+                    className="text-white hover:text-[#3D0C11] transition-colors duration-300 block"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                </div>
+              ))}
+              {isLoggedIn ? (
+                <LogoutButton />
+              ) : (
+                <Link href="/login">
+                  <Button
+                    className={cn(
+                      ` bg-[#3D0C11] text-white hover:bg-[#2D090D] transition-all duration-300`,
+                      !isScrolled &&
+                        "bg-white/10 backdrop-blur-sm hover:bg-white/20",
+                      "hover:scale-105"
+                    )}
+                  >
+                    Login
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
-}
+};
 
-interface MobileLinkProps extends React.PropsWithChildren {
-  href: string;
-  onOpenChange?: (open: boolean) => void;
-  className?: string;
-}
-
-function MobileLink({
-  href,
-  onOpenChange,
-  className,
-  children,
-}: MobileLinkProps) {
-  return (
-    <Link
-      href={href}
-      onClick={() => {
-        onOpenChange?.(false);
-      }}
-      className={className}
-    >
-      {children}
-    </Link>
-  );
-}
+export default NavBar;
