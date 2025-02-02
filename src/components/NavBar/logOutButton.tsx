@@ -11,8 +11,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const LogoutButton = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const signOut = async () => {
     try {
       console.log("clicked. signing out");
@@ -35,7 +47,15 @@ const LogoutButton = () => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>Logout</AlertDialogTrigger>
+      <AlertDialogTrigger
+        className={cn(
+          ` text-sm transition-colors duration-300 group-hover:text-[#3D0C11]`,
+          isScrolled ? "text-gray-700" : "text-white",
+          "flex items-center"
+        )}
+      >
+        Log out
+      </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure you want to logout?</AlertDialogTitle>
