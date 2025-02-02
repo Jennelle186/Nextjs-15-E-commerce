@@ -52,7 +52,7 @@ const NavBar = ({ session }: { session: any }) => {
       transition={{ duration: 0.6 }}
       className={cn(
         "fixed w-full z-50 transition-all duration-300",
-        isScrolled ? "bg-white shadow-md py-2" : "bg-transparent py-4"
+        isScrolled ? "bg-white shadow-md py-2" : " backdrop-blur-md py-4"
       )}
     >
       <div className="container mx-auto px-4">
@@ -79,7 +79,7 @@ const NavBar = ({ session }: { session: any }) => {
                   href={item.href}
                   className={cn(
                     ` text-sm transition-colors duration-300 group-hover:text-rose-300`,
-                    isScrolled ? "text-gray-700" : "text-white",
+                    isScrolled ? "text-gray-700" : "text-gray-300",
                     "flex items-center"
                   )}
                 >

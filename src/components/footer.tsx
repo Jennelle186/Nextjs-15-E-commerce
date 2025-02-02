@@ -12,7 +12,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative w-full bg-indigo-950 text-white py-12 overflow-hidden">
+    <footer className="relative w-full bg-[#161515] text-white py-12 overflow-hidden">
       <div className="absolute inset-0">
         <motion.div
           className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.15] via-transparent to-rose-500/[0.15]"

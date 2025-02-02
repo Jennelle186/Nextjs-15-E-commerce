@@ -107,7 +107,7 @@ const ProfileComponent = ({ user }: ProfileProps) => {
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 pt-16">
       <Card>
         <CardHeader>
           <CardTitle>Edit Your Profile</CardTitle>
