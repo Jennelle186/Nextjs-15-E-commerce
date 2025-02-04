@@ -1,9 +1,12 @@
+"use client";
+
 import {
   BaggageClaim,
   FlipVertical,
   LayoutDashboard,
   Settings,
   UserRound,
+  LogOut, // If you have an icon for logout from lucide-react
 } from "lucide-react";
 import {
   Sidebar,
@@ -16,6 +19,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import LogoutButton from "../NavBar/logOutButton";
 
 // Menu items.
 const items = [
@@ -49,6 +53,12 @@ const items = [
     url: "#",
     icon: UserRound,
   },
+  // Add a logout item
+  {
+    title: "Logout",
+    isLogout: true,
+    icon: LogOut,
+  },
 ];
 
 const AppSidebar = () => {
@@ -64,13 +74,20 @@ const AppSidebar = () => {
               {items.map((item, index) => (
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton asChild>
-                    <Link
-                      href={item.url}
-                      className="flex items-center p-2 text-lg"
-                    >
-                      <item.icon className="mr-2" />
-                      <span>{item.title}</span>
-                    </Link>
+                    {item.isLogout ? (
+                      // If the item is a logout item, render the LogoutButton
+                      <div className="flex items-center p-2 text-lg">
+                        <LogoutButton />
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.url || "#"}
+                        className="flex items-center p-2 text-lg"
+                      >
+                        <item.icon className="mr-2" />
+                        <span>{item.title}</span>
+                      </Link>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

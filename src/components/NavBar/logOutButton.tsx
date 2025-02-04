@@ -50,7 +50,7 @@ const LogoutButton = () => {
       <AlertDialogTrigger
         className={cn(
           ` text-sm transition-colors duration-300 group-hover:text-[#3D0C11]`,
-          isScrolled ? "text-gray-700" : "text-white",
+          isScrolled ? "text-gray-700" : "text-gray",
           "flex items-center"
         )}
       >
