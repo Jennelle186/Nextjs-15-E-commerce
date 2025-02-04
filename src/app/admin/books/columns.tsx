@@ -52,6 +52,19 @@ export const columns: ColumnDef<Book>[] = [
     },
   },
   {
+    accessorKey: "price",
+    header: "Price",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("price"));
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "PHP",
+      }).format(amount);
+
+      return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
+  {
     accessorKey: "length",
     header: "Length (cm)",
   },

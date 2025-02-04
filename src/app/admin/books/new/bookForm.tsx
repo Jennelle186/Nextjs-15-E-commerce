@@ -65,6 +65,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
       productLanguage: "English",
       stocks: 0,
       title: "",
+      price: 0,
     },
   });
 
@@ -131,6 +132,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
               });
             }}
           >
+            {/* Row 1: Basic details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -218,6 +220,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
               />
             </div>
 
+            {/* Row 2: Book Title */}
             <FormField
               control={form.control}
               name="title"
@@ -235,6 +238,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
               )}
             />
 
+            {/* Row 3: Dimensions */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormField
                 control={form.control}
@@ -293,6 +297,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
               />
             </div>
 
+            {/* Row 4: Genre, Author, Format & Edition */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -351,6 +356,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                       </SelectContent>
                     </Select>
                     <FormMessage />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -397,6 +403,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
               />
             </div>
 
+            {/* Row 5: Language & Signed */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -433,28 +440,60 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="stocks"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Stocks</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      {...field}
-                      onChange={(e) => field.onChange(+e.target.value)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  {state?.errors?.length && (
-                    <FormDescription>{state.errors.stocks}</FormDescription>
-                  )}
-                </FormItem>
-              )}
-            />
+            {/* Row 6: Stocks */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="stocks"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stocks</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {state?.errors?.stocks && (
+                      <FormDescription>{state.errors.stocks}</FormDescription>
+                    )}
+                  </FormItem>
+                )}
+              />
 
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                          ₱
+                        </span>
+                        <Input
+                          type="number"
+                          step="1"
+                          className="pl-7" // add padding so text doesn't overlap the prefix
+                          {...field}
+                          onChange={(e) => field.onChange(+e.target.value)}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                    {state?.errors?.price && (
+                      <FormDescription>{state.errors.price}</FormDescription>
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Submit Button */}
             <Button disabled={pending} type="submit" className="w-full">
               {pending ? (
                 <>

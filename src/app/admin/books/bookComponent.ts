@@ -16,6 +16,7 @@ export type Book = {
     bookImageUrl: string | null;
     stocks: number;
     title: string;
+    price: number;
     authors: {
       firstName: string;
       lastName: string;
