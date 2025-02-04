@@ -44,6 +44,7 @@ const Books = async () => {
     bookImageUrl: book.bookImageUrl,
     stocks: book.stocks,
     title: book.title,
+    price: book.price,
     authors: {
       firstName: book.authors.firstName,
       lastName: book.authors.lastName,

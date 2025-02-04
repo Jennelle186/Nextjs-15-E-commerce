@@ -19,6 +19,7 @@ export const BookSchema = z.object({
   productLanguage: z.string().min(1, "Product language is required"),
   stocks: z.number().int().positive("Stocks must be a positive integer"),
   title: z.string().min(1, "Title is required"),
+  price: z.number().int().positive("Price must be a positive number")
 });
 
 // TypeScript Type for Book
@@ -43,6 +44,7 @@ export type BookFormState =
         productLanguage?: string[];
         stocks?: string[];
         title?: string[];
+        price?: string[];
       };
       message?: string;
     }

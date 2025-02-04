@@ -45,6 +45,8 @@ const NavBar = ({ session }: { session: any }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  console.log(session?.user.id, " session in the navbar");
+
   return (
     <motion.nav
       initial={{ y: -100 }}
