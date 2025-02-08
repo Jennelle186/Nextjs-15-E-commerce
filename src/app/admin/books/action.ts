@@ -30,6 +30,8 @@ export async function addBook(state: BookFormState, formData: FormData) {
     stocks: formData.get("stocks") ? Number(formData.get("stocks")) : undefined,
     title: formData.get("title"),
     price: formData.get("price") ? Number(formData.get("price")) : undefined,
+    description: formData.get("description"),
+  
   });
 
    // Check if validation failed
@@ -41,11 +43,11 @@ export async function addBook(state: BookFormState, formData: FormData) {
   }
 
  // Prepare for insertion into the new database
- const {ISBN, length, width, height, publisher, publicationDate, pages, genre, authorId, signed, format, edition, productLanguage, stocks, title, price} = validatedFields.data
+ const {ISBN, length, width, height, publisher, publicationDate, pages, genre, authorId, signed, format, edition, productLanguage, stocks, title, price, description} = validatedFields.data
 
   // Insert the new author into the database
   const supabase = createClient();
-  const {data, error} = await (await supabase).from('books').insert({isbn: ISBN, length, width, height, publisher,publicationDate, pages, genre, author_id: authorId, signed, format, edition,  productLanguage, stocks, title, price});
+  const {data, error} = await (await supabase).from('books').insert({isbn: ISBN, length, width, height, publisher,publicationDate, pages, genre, author_id: authorId, signed, format, edition,  productLanguage, stocks, title, price, description});
 
   if(data){
     console.log(data,"data in the addBook function")
