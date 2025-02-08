@@ -56,7 +56,7 @@ export default function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[150px] cursor-text rounded-md border p-5 ring-offset-background focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 ",
+          "w-full min-h-[150px] cursor-text rounded-md border p-5 ring-offset-background focus:outline-none focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
       },
     },
     immediatelyRender: false,
