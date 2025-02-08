@@ -38,6 +38,7 @@ import { startTransition, useActionState, useEffect } from "react";
 import { addBook } from "../action";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import RichTextEditor from "@/components/Editor/RichTextEditor";
 
 interface BookFormProps {
   authors: Author[];
@@ -66,6 +67,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
       stocks: 0,
       title: "",
       price: 0,
+      description: "",
     },
   });
 
@@ -492,6 +494,27 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                 )}
               />
             </div>
+
+            {/* Editor part */}
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <RichTextEditor onChange={field.onChange} />
+                  </FormControl>
+                  <FormMessage />
+                  {state?.errors?.description && (
+                    <FormDescription>
+                      {state.errors.description}
+                    </FormDescription>
+                  )}
+                </FormItem>
+              )}
+            />
 
             {/* Submit Button */}
             <Button disabled={pending} type="submit" className="w-full">
