@@ -39,7 +39,7 @@ import ExpandedRowContent from "../ExnpadedRowContent";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  renderExpandedContent: (data: TData) => React.ReactNode;
+  renderExpandedContent?: (data: TData) => React.ReactNode;
 }
 type ExpandedState = true | Record<string, boolean>;
 
@@ -69,7 +69,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
-    getRowCanExpand: () => true,
+    getRowCanExpand: () => !!renderExpandedContent,
     getExpandedRowModel: getExpandedRowModel(),
     globalFilterFn: "includesString",
     state: {
@@ -172,7 +172,7 @@ export function DataTable<TData, TValue>({
                       </TableCell>
                     ))}
                   </TableRow>
-                  {row.getIsExpanded() && (
+                  {row.getIsExpanded() && renderExpandedContent && (
                     <TableRow>
                       <TableCell colSpan={columns.length}>
                         <ExpandedRowContent
