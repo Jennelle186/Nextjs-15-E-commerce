@@ -22,6 +22,7 @@ export type Book = {
       lastName: string;
       middleName?: string;
     };
+    description: string;
   };
 
   

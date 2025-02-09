@@ -3,10 +3,12 @@
 import {
   ColumnDef,
   ColumnFiltersState,
+  Row,
   SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -32,11 +34,20 @@ import React, { useState } from "react";
 import { Button } from "./button";
 import { Input } from "./input";
 import { ChevronDown } from "lucide-react";
+import { Book } from "@/app/admin/books/bookComponent";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./card";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
+type ExpandedState = true | Record<string, boolean>;
 
 export function DataTable<TData, TValue>({
   columns,
@@ -50,6 +61,7 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({});
 
   const [globalFilter, setGlobalFilter] = useState("");
+  const [expanded, setExpanded] = useState<ExpandedState>({});
 
   const table = useReactTable({
     data,
@@ -62,14 +74,29 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
+    getRowCanExpand: () => true,
+    getExpandedRowModel: getExpandedRowModel(),
     globalFilterFn: "includesString",
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       globalFilter,
+      expanded: expanded,
     },
+    onExpandedChange: setExpanded,
+    filterFromLeafRows: true, // search through the expanded rows
   });
+
+  const handleRowClick = (
+    event: React.MouseEvent<HTMLTableRowElement>,
+    row: Row<TData>
+  ) => {
+    // Check if the click is on the actions cell
+    if (!(event.target as HTMLElement).closest(".actions-cell")) {
+      row.toggleExpanded();
+    }
+  };
 
   return (
     <div>
@@ -130,19 +157,34 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                <React.Fragment key={row.id}>
+                  <TableRow
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={(e) => handleRowClick(e, row)}
+                    className="cursor-pointer hover:bg-muted/50"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className={
+                          cell.column.id === "actions" ? "actions-cell" : ""
+                        }
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  {row.getIsExpanded() && (
+                    <TableRow>
+                      <TableCell colSpan={columns.length}>
+                        <ExpandedRowContent {...(row.original as Book)} />
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
               ))
             ) : (
               <TableRow>
@@ -182,5 +224,67 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
+  );
+}
+
+function ExpandedRowContent(book: Book) {
+  const date = new Date(book.publicationDate as string);
+  //formatting the date
+  const formattedDate = date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="text-lg">{book.title}</CardTitle>
+        <CardDescription>{book.genre}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="mb-4 text-muted-foreground">
+          {JSON.stringify(book.description, null, 2)}
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Publication Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <dl className="grid grid-cols-2 gap-2 text-sm">
+                <dt className="font-semibold">Publisher:</dt>
+                <dd>{book.publisher}</dd>
+                <dt className="font-semibold">Publication Date:</dt>
+                <dd>{formattedDate}</dd>
+                <dt className="font-semibold">Pages:</dt>
+                <dd>{book.pages}</dd>
+                <dt className="font-semibold">Language:</dt>
+                <dd>{book.productLanguage}</dd>
+              </dl>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Book Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <dl className="grid grid-cols-2 gap-2 text-sm">
+                <dt className="font-semibold">Format:</dt>
+                <dd>{book.format}</dd>
+                <dt className="font-semibold">Edition:</dt>
+                <dd>{book.edition}</dd>
+                <dt className="font-semibold">Signed:</dt>
+                <dd>{book.signed ? "Yes" : "No"}</dd>
+                <dt className="font-semibold">Dimensions:</dt>
+                <dd>
+                  {book.length}x{book.width}x{book.height} cm
+                </dd>
+              </dl>
+            </CardContent>
+          </Card>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

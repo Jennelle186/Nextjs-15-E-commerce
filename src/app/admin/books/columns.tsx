@@ -24,7 +24,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, SquarePen, Trash2Icon } from "lucide-react";
+import {
+  ArrowUpDown,
+  MoreHorizontal,
+  SquarePen,
+  Trash2Icon,
+} from "lucide-react";
 import Link from "next/link";
 import { handleDeleteBook } from "./action";
 import { toast } from "@/hooks/use-toast";
@@ -34,92 +39,44 @@ export const columns: ColumnDef<Book>[] = [
     accessorKey: "isbn",
     header: "ISBN",
   },
+
   {
     accessorKey: "title",
-    header: "Book Title",
-  },
-  {
-    // For the authors field, we can combine first, middle, and last name.
-    accessorKey: "authors",
-    header: "Author",
-    cell: ({ row }) => {
-      const author = row.original.authors;
-      // Check if middleName exists and adjust the string accordingly
-      const fullName = author.middleName
-        ? `${author.firstName} ${author.middleName} ${author.lastName}`
-        : `${author.firstName} ${author.lastName}`;
-      return <div>{fullName}</div>;
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Title
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
     },
   },
   {
     accessorKey: "price",
     header: "Price",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("price"));
+      const price = Number.parseFloat(row.getValue("price"));
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
-        currency: "PHP",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+        currency: "USD",
+      }).format(price);
+      return <div className="font-medium">{formatted}</div>;
     },
   },
   {
-    accessorKey: "length",
-    header: "Length (cm)",
-  },
-  {
-    accessorKey: "width",
-    header: "Width (cm)",
-  },
-  {
-    accessorKey: "height",
-    header: "Height (cm)",
-  },
-  {
-    accessorKey: "publisher",
-    header: "Publisher",
-  },
-  {
-    accessorKey: "publicationDate",
-    header: "Publication Date",
+    accessorKey: "authors",
+    header: "Author",
     cell: ({ row }) => {
-      // Convert the string from the API into a Date object
-      const rawDate = row.getValue("publicationDate");
-      const date = new Date(rawDate as string);
-      // Format the date into a more readable format (adjust locale/options as needed)
-      const formattedDate = date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      return <div>{formattedDate}</div>;
+      const authors = row.getValue("authors") as Book["authors"];
+      return <div>{`${authors.firstName} ${authors.lastName}`}</div>;
     },
-  },
-  {
-    accessorKey: "pages",
-    header: "Pages",
   },
   {
     accessorKey: "genre",
     header: "Genre",
-  },
-  {
-    accessorKey: "signed",
-    header: "Signed",
-    cell: ({ row }) => <div>{row.getValue("signed") ? "Yes" : "No"}</div>,
-  },
-  {
-    accessorKey: "format",
-    header: "Format",
-  },
-  {
-    accessorKey: "edition",
-    header: "Edition",
-  },
-  {
-    accessorKey: "productLanguage",
-    header: "Language",
   },
   {
     accessorKey: "stocks",

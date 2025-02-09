@@ -50,6 +50,7 @@ const Books = async () => {
       lastName: book.authors.lastName,
       middleName: book.authors.middleName,
     },
+    description: book.description,
   }));
 
   return <BookListComponent books={books} />;
