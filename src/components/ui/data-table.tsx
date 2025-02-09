@@ -34,24 +34,19 @@ import React, { useState } from "react";
 import { Button } from "./button";
 import { Input } from "./input";
 import { ChevronDown } from "lucide-react";
-import { Book } from "@/app/admin/books/bookComponent";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./card";
+import ExpandedRowContent from "../ExnpadedRowContent";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  renderExpandedContent: (data: TData) => React.ReactNode;
 }
 type ExpandedState = true | Record<string, boolean>;
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  renderExpandedContent,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -180,7 +175,10 @@ export function DataTable<TData, TValue>({
                   {row.getIsExpanded() && (
                     <TableRow>
                       <TableCell colSpan={columns.length}>
-                        <ExpandedRowContent {...(row.original as Book)} />
+                        <ExpandedRowContent
+                          data={row.original}
+                          renderContent={renderExpandedContent}
+                        />
                       </TableCell>
                     </TableRow>
                   )}
@@ -224,67 +222,5 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
-  );
-}
-
-function ExpandedRowContent(book: Book) {
-  const date = new Date(book.publicationDate as string);
-  //formatting the date
-  const formattedDate = date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-lg">{book.title}</CardTitle>
-        <CardDescription>{book.genre}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4 text-muted-foreground">
-          {JSON.stringify(book.description, null, 2)}
-        </p>
-        <div className="grid grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">Publication Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <dl className="grid grid-cols-2 gap-2 text-sm">
-                <dt className="font-semibold">Publisher:</dt>
-                <dd>{book.publisher}</dd>
-                <dt className="font-semibold">Publication Date:</dt>
-                <dd>{formattedDate}</dd>
-                <dt className="font-semibold">Pages:</dt>
-                <dd>{book.pages}</dd>
-                <dt className="font-semibold">Language:</dt>
-                <dd>{book.productLanguage}</dd>
-              </dl>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">Book Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <dl className="grid grid-cols-2 gap-2 text-sm">
-                <dt className="font-semibold">Format:</dt>
-                <dd>{book.format}</dd>
-                <dt className="font-semibold">Edition:</dt>
-                <dd>{book.edition}</dd>
-                <dt className="font-semibold">Signed:</dt>
-                <dd>{book.signed ? "Yes" : "No"}</dd>
-                <dt className="font-semibold">Dimensions:</dt>
-                <dd>
-                  {book.length}x{book.width}x{book.height} cm
-                </dd>
-              </dl>
-            </CardContent>
-          </Card>
-        </div>
-      </CardContent>
-    </Card>
   );
 }
