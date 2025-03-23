@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "../../../../../../utils/supabase/server";
 import { fetchAllBooks } from "../../action";
+import EditBookComponent from "./EditBookComponent";
 
 const BookEdit = async (props: { params: Promise<{ id: string }> }) => {
   const supabase = await createClient();
@@ -21,7 +22,13 @@ const BookEdit = async (props: { params: Promise<{ id: string }> }) => {
   const books = await fetchAllBooks(id);
   const bookData = books ? books[0] : null;
 
-  return <h1>Edit Book {JSON.stringify(bookData, null, 2)}</h1>;
+  // Fetch all authors.
+  const { data: authors, error } = await supabase.from("authors").select("*");
+  if (error) {
+    console.error("Error fetching authors:", error);
+  }
+
+  return <EditBookComponent bookData={bookData} authors={authors || []} />;
 };
 
 export default BookEdit;
