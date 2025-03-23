@@ -28,7 +28,7 @@ export default async function NavbarWrapper() {
       isAdmin = true;
     } else {
       // User is not an admin, redirect or show an error
-      console.error("User is not an admin");
+      console.log("User is not an admin");
     }
 
     // If the user is an admin, don't show the Navbar at all
@@ -38,7 +38,7 @@ export default async function NavbarWrapper() {
 
     return <Navbar session={session} />;
   } catch (error) {
-    console.error("Error in the navbar wrapper:", error);
+    console.log("Error in the navbar wrapper:", error);
     return <Navbar session={null} />;
   }
 }

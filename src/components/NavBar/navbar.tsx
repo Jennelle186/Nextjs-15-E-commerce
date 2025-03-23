@@ -23,19 +23,32 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { name: "Home", href: "/" },
+  { name: "Browse Books", href: "/books" },
   { name: "Profile", href: "/profile" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
-const NavBar = ({ session }: { session: any }) => {
+type Session = {
+  user: {
+    id: string;
+    name?: string;
+    email?: string;
+  };
+};
+
+const NavBar = ({ session }: { session: Session | null }) => {
   const isLoggedIn = !!session;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  //links that are accessible to non-logged in users as well
   const accessibleNavItems = isLoggedIn
     ? navItems
-    : navItems.filter((item) => item.href === "/" || item.href === "/about");
+    : navItems.filter(
+        (item) =>
+          item.href === "/" || item.href === "/books" || item.href === "/about"
+      );
 
   useEffect(() => {
     const handleScroll = () => {
