@@ -23,7 +23,6 @@ export type Book = {
       middleName?: string;
     };
     description: string;
-    bookImageUrls: string;
   };
 
   
