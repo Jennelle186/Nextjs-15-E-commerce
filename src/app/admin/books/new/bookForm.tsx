@@ -1,13 +1,13 @@
 "use client";
 
+import { useActionState, useEffect } from "react";
+import { addBook } from "../action";
+import { useForm } from "react-hook-form";
 import {
   BookInferSchema,
   BookSchema,
 } from "../../../../../validation/bookSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Author } from "../../../../../types/product";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -19,33 +19,36 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+// import RichTextEditor from "@/components/Editor/RichTextEditor";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { bookGenres, formats } from "./bookMaps";
+import { Select } from "@radix-ui/react-select";
 import { Switch } from "@/components/ui/switch";
-import { startTransition, useActionState, useEffect } from "react";
-import { addBook } from "../action";
-import { toast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
-import RichTextEditor from "@/components/Editor/RichTextEditor";
+import { Author } from "../../../../../types/product";
+import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "next/navigation";
 
 interface BookFormProps {
   authors: Author[];
 }
 
 const BookForm: React.FC<BookFormProps> = ({ authors }) => {
+  const router = useRouter();
   const [state, action, pending] = useActionState(addBook, undefined);
 
   // React Hook Form with default values
   const form = useForm<BookInferSchema>({
     resolver: zodResolver(BookSchema),
     defaultValues: {
-      ISBN: "",
+      isbn: "",
       length: 0,
       width: 0,
       height: 0,
@@ -53,7 +56,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
       publicationDate: new Date(), // Defaults to today’s date
       pages: 0,
       genre: "",
-      authorId: "",
+      author_id: "",
       signed: false,
       format: "Paperback",
       edition: "1st",
@@ -62,66 +65,30 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
       title: "",
       price: 0,
       description: "",
+      bookImageUrl: "",
     },
   });
 
-  //submitting the forms
-  async function onSubmit(data: BookInferSchema) {
-    try {
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        formData.append(
-          key,
-          value instanceof Date ? value.toISOString() : value.toString()
-        );
-      });
-
-      //sending the formData to the action.ts for submitting the forms
-      const response = (await action(formData)) as {
-        error?: string;
-        message?: string;
-      } | void;
-
-      //Error or success messages for any submissions and any errors/success from the server
-      if (response?.error) {
-        toast({
-          title: "Error",
-          description: `An error occurred: ${response.error}`,
-        });
-      } else {
-        form.reset();
-      }
-    } catch {
-      toast({
-        title: "Error",
-        description: "An unexpected error occured.",
-      });
-    }
-  }
-
-  //Error or success messages for any submissions and any errors/success from the server
   useEffect(() => {
-    if (state?.message) {
+    if (!state) return; // Ensures no unnecessary re-renders
+
+    if (state.message) {
       toast({
-        title: state?.error ? "Error" : "Success",
-        description: state?.message,
+        title: state.error ? "Error" : "Success",
+        description: state.message,
       });
     }
-  }, [state]);
+
+    if (state.id) {
+      router.push(`/admin/books/${state.id}/edit`);
+    }
+  }, [state, router]); // Only `state` is needed in dependencies
 
   return (
     <div className="container mx-auto p-4">
       {/* Testing */}
       <Form {...form}>
-        <form
-          className="space-y-8"
-          onSubmit={(e) => {
-            e.preventDefault();
-            startTransition(() => {
-              form.handleSubmit(onSubmit)(e);
-            });
-          }}
-        >
+        <form action={action}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -132,7 +99,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
-                    name="ISBN"
+                    name="isbn"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>ISBN</FormLabel>
@@ -141,9 +108,10 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                         </FormControl>
                         <FormDescription>
                           Enter the 10 or 13 digit ISBN.
-                          {state?.errors?.ISBN && <p>{state.errors.ISBN}</p>}
                         </FormDescription>
-                        <FormMessage />
+                        {state?.errors?.isbn && (
+                          <FormMessage>{state.errors.isbn}</FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -156,11 +124,8 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                         <FormControl>
                           <Input placeholder="Enter publisher" {...field} />
                         </FormControl>
-                        <FormMessage />
                         {state?.errors?.publisher && (
-                          <FormDescription>
-                            {state.errors.publisher}
-                          </FormDescription>
+                          <FormMessage>{state.errors.publisher}</FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -185,11 +150,10 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             }
                           />
                         </FormControl>
-                        <FormMessage />
                         {state?.errors?.publicationDate && (
-                          <FormDescription>
+                          <FormMessage>
                             {state.errors.publicationDate}
-                          </FormDescription>
+                          </FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -209,9 +173,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                         </FormControl>
                         <FormMessage />
                         {state?.errors?.pages && (
-                          <FormDescription>
-                            {state.errors.pages}
-                          </FormDescription>
+                          <FormMessage>{state.errors.pages}</FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -230,7 +192,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                       </FormControl>
                       <FormMessage />
                       {state?.errors?.title && (
-                        <FormDescription>{state.errors.title}</FormDescription>
+                        <FormMessage>{state.errors.title}</FormMessage>
                       )}
                     </FormItem>
                   )}
@@ -254,9 +216,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                         </FormControl>
                         <FormMessage />
                         {state?.errors?.length && (
-                          <FormDescription>
-                            {state.errors.length}
-                          </FormDescription>
+                          <FormMessage>{state.errors.length}</FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -274,7 +234,9 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             onChange={(e) => field.onChange(+e.target.value)}
                           />
                         </FormControl>
-                        <FormMessage />
+                        {state?.errors?.width && (
+                          <FormMessage>{state.errors.width}</FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -291,7 +253,9 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             onChange={(e) => field.onChange(+e.target.value)}
                           />
                         </FormControl>
-                        <FormMessage />
+                        {state?.errors?.height && (
+                          <FormMessage>{state.errors.height}</FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -326,19 +290,22 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
+                        {state?.errors?.genre && (
+                          <FormMessage>{state.errors.genre}</FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name="authorId"
+                    name="author_id"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Author</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={field.onChange || ""}
                           defaultValue={field.value}
+                          name={`author_id`}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -355,8 +322,9 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                        <FormMessage />
+                        {state?.errors?.author_id && (
+                          <FormMessage>{state.errors.author_id}</FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -368,8 +336,9 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                       <FormItem>
                         <FormLabel>Format</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={field.onChange || " "}
                           defaultValue={field.value}
+                          name="format"
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -387,7 +356,9 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
+                        {state?.errors?.format && (
+                          <FormMessage>{state.errors.format}</FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -400,7 +371,9 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                         <FormControl>
                           <Input placeholder="Enter edition" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        {state?.errors?.edition && (
+                          <FormMessage>{state.errors.edition}</FormMessage>
+                        )}{" "}
                       </FormItem>
                     )}
                   />
@@ -420,7 +393,11 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
+                        {state?.errors?.productLanguage && (
+                          <FormMessage>
+                            {state.errors.productLanguage}
+                          </FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -441,6 +418,9 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
+                        {state?.errors?.signed && (
+                          <FormMessage>{state.errors.signed}</FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -464,9 +444,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                         </FormControl>
                         <FormMessage />
                         {state?.errors?.stocks && (
-                          <FormDescription>
-                            {state.errors.stocks}
-                          </FormDescription>
+                          <FormMessage>{state.errors.stocks}</FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -494,9 +472,7 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                         </FormControl>
                         <FormMessage />
                         {state?.errors?.price && (
-                          <FormDescription>
-                            {state.errors.price}
-                          </FormDescription>
+                          <FormMessage>{state.errors.price}</FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -516,13 +492,24 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <RichTextEditor onChange={field.onChange} />
+                        {/* <RichTextEditor
+                          content={field.value}
+                          onChange={(value) => field.onChange(value)}
+                        /> */}
+                        <Textarea
+                          placeholder="Enter the description of the book"
+                          className="resize-none"
+                          {...field}
+                          onInput={(e) => {
+                            const target = e.target as HTMLTextAreaElement;
+                            target.style.height = "0px";
+                            target.style.height = target.scrollHeight + "px";
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                       {state?.errors?.description && (
-                        <FormDescription>
-                          {state.errors.description}
-                        </FormDescription>
+                        <FormMessage>{state.errors.description}</FormMessage>
                       )}
                     </FormItem>
                   )}

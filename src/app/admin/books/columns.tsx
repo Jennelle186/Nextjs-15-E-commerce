@@ -33,11 +33,12 @@ import {
 import Link from "next/link";
 import { handleDeleteBook } from "./action";
 import { toast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 export const columns: ColumnDef<Book>[] = [
   {
     accessorKey: "isbn",
-    header: "ISBN",
+    header: "isbn",
   },
 
   {
@@ -55,18 +56,6 @@ export const columns: ColumnDef<Book>[] = [
     },
   },
   {
-    accessorKey: "price",
-    header: "Price",
-    cell: ({ row }) => {
-      const price = Number.parseFloat(row.getValue("price"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(price);
-      return <div className="font-medium">{formatted}</div>;
-    },
-  },
-  {
     accessorKey: "authors",
     header: "Author",
     cell: ({ row }) => {
@@ -75,12 +64,50 @@ export const columns: ColumnDef<Book>[] = [
     },
   },
   {
+    accessorKey: "price",
+    header: "Price",
+    cell: ({ row }) => {
+      const price = Number.parseFloat(row.getValue("price"));
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "PHP",
+      }).format(price);
+      return <div className="font-medium">{formatted}</div>;
+    },
+  },
+  {
     accessorKey: "genre",
     header: "Genre",
   },
   {
     accessorKey: "stocks",
-    header: "Stocks",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="pl-0 font-semibold"
+        >
+          Stock
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const stock = Number.parseInt(row.getValue("stocks"));
+      return (
+        <div>
+          <Badge
+            variant={
+              stock > 10 ? "default" : stock < 0 ? "outline" : "destructive"
+            }
+            className="font-normal"
+          >
+            {stock > 0 ? stock : "Out of stock"}
+          </Badge>
+        </div>
+      );
+    },
   },
   {
     id: "actions",

@@ -1,9 +1,12 @@
 "use server"
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "../../../../utils/supabase/server";
 import { BookFormState, BookSchema } from "../../../../validation/bookSchema";
 
 
+
+//adding a book
 export async function addBook(state: BookFormState, formData: FormData) {
   // Validate form fields
   // Log all form data to debug
@@ -12,7 +15,7 @@ export async function addBook(state: BookFormState, formData: FormData) {
   }
 
   const validatedFields = BookSchema.safeParse({
-    ISBN: formData.get("ISBN"),
+    isbn:formData.get("isbn"),
     length: formData.get("length") ? Number(formData.get("length")) : undefined,
     width: formData.get("width") ? Number(formData.get("width")) : undefined,
     height: formData.get("height") ? Number(formData.get("height")) : undefined,
@@ -22,7 +25,7 @@ export async function addBook(state: BookFormState, formData: FormData) {
       : undefined,
     pages: formData.get("pages") ? Number(formData.get("pages")) : undefined,
     genre: formData.get("genre"),
-    authorId: formData.get("authorId"),
+    author_id: formData.get("author_id"),
     signed: formData.get("signed") === "true", // Ensure boolean conversion
     format: formData.get("format"),
     edition: formData.get("edition"),
@@ -31,8 +34,8 @@ export async function addBook(state: BookFormState, formData: FormData) {
     title: formData.get("title"),
     price: formData.get("price") ? Number(formData.get("price")) : undefined,
     description: formData.get("description"),
-  
   });
+
 
    // Check if validation failed
    if (!validatedFields.success) {
@@ -43,14 +46,14 @@ export async function addBook(state: BookFormState, formData: FormData) {
   }
 
  // Prepare for insertion into the new database
- const {ISBN, length, width, height, publisher, publicationDate, pages, genre, authorId, signed, format, edition, productLanguage, stocks, title, price, description} = validatedFields.data
+ const {isbn, length, width, height, publisher, publicationDate, pages, genre, author_id, signed, format, edition, productLanguage, stocks, title, price, description} = validatedFields.data
 
   // Insert the new author into the database
   const supabase = createClient();
-  const {data, error} = await (await supabase).from('books').insert({isbn: ISBN, length, width, height, publisher,publicationDate, pages, genre, author_id: authorId, signed, format, edition,  productLanguage, stocks, title, price, description});
+  const {data, error} = await (await supabase).from('books').insert({isbn, length, width, height, publisher,publicationDate, pages, genre, author_id, signed, format, edition,  productLanguage, stocks, title, price, description});
 
   if(data){
-    console.log(data,"data in the addBook function")
+    console.log(data,"isbn:", isbn,"data in the addBook function")
   }
 
   
@@ -61,9 +64,12 @@ export async function addBook(state: BookFormState, formData: FormData) {
     };
   }
 
+  revalidatePath('/admin/books');
+  
   return {
     error: false,
     message: 'Book updated successfully',
+    id: isbn,
   };
 
 }
@@ -96,5 +102,77 @@ export async function handleDeleteBook(id: string){
       return {success: false, message:error.message}
   }
 
+  revalidatePath('/admin/books');
+
   return {success: true, message: "Book deleted succesfully"}  
 }
+
+//edit a book
+export async function updateBook(state: BookFormState, formData: FormData) {
+  // Validate form fields
+  // Log all form data to debug
+  for (const pair of formData.entries()) {
+    console.log(`${pair[0]}: ${pair[1]}`, "pair in the updateBook function");
+  }
+
+  const validatedFields = BookSchema.safeParse({
+    isbn:formData.get("isbn"),
+    length: formData.get("length") ? Number(formData.get("length")) : undefined,
+    width: formData.get("width") ? Number(formData.get("width")) : undefined,
+    height: formData.get("height") ? Number(formData.get("height")) : undefined,
+    publisher: formData.get("publisher"),
+    publicationDate: formData.get("publicationDate") 
+      ? new Date(formData.get("publicationDate") as string) 
+      : undefined,
+    pages: formData.get("pages") ? Number(formData.get("pages")) : undefined,
+    genre: formData.get("genre"),
+    author_id: formData.get("author_id"),
+    signed: formData.get("signed") === "true", // Ensure boolean conversion
+    format: formData.get("format"),
+    edition: formData.get("edition"),
+    productLanguage: formData.get("productLanguage"),
+    stocks: formData.get("stocks") ? Number(formData.get("stocks")) : undefined,
+    title: formData.get("title"),
+    price: formData.get("price") ? Number(formData.get("price")) : undefined,
+    description: formData.get("description"),
+    bookImageUrl : formData.get("bookImageUrl")
+  });
+
+
+   // Check if validation failed
+   if (!validatedFields.success) {
+    console.error("Validation Errors:", validatedFields.error.format()); // Log errors
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+ // Prepare for insertion into the new database
+ const {isbn, length, width, height, publisher, publicationDate, pages, genre, author_id, signed, format, edition, productLanguage, stocks, title, price, description, bookImageUrl} = validatedFields.data
+
+  // Insert the new author into the database
+  const supabase = createClient();
+  const {data, error} = await (await supabase).from('books').update({isbn, length, width, height, publisher,publicationDate, pages, genre, author_id, signed, format, edition,  productLanguage, stocks, title, price, description, bookImageUrl}).eq('isbn',isbn);
+
+  if(data){
+    console.log(data,"isbn:", isbn,"data in the updateBook function")
+  }
+
+  if (error) {
+    return {
+      error: true,
+      message: error.message,
+    };
+  }
+
+  revalidatePath(`/admin/books/${isbn}/edit`);
+  revalidatePath('/admin/books');
+
+  return {
+    error: false,
+    message: 'Profile updated successfully',
+  };
+
+
+}
+

@@ -9,13 +9,10 @@ import { mergeAttributes } from "@tiptap/core";
 
 type TextEditorProps = {
   onChange: (content: string) => void;
-  initialContent?: string; // Add this line
+  content?: string; // Add this line
 };
 
-export default function RichTextEditor({
-  onChange,
-  initialContent,
-}: TextEditorProps) {
+export default function RichTextEditor({ onChange, content }: TextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -49,8 +46,9 @@ export default function RichTextEditor({
         },
       }).configure({ levels: [1, 2] }),
     ],
-    content: initialContent,
+    content: content,
     onUpdate: ({ editor }) => {
+      console.log(editor.getHTML());
       onChange(editor.getHTML());
     },
     editorProps: {
@@ -59,6 +57,7 @@ export default function RichTextEditor({
           "w-full min-h-[150px] cursor-text rounded-md border p-5 ring-offset-background focus:outline-none focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
       },
     },
+
     immediatelyRender: false,
   });
   return (

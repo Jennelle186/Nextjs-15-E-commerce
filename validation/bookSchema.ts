@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const BookSchema = z.object({
-  ISBN: z.string().min(10, "ISBN must be at least 10 characters").max(13, "ISBN must not exceed 13 characters"),
+  isbn: z.string().min(10, "ISBN must be at least 10 characters").max(13, "ISBN must not exceed 13 characters"),
   length: z.number().positive("Length must be a positive number"),
   width: z.number().positive("Width must be a positive number"),
   height: z.number().positive("Height must be a positive number"),
@@ -12,7 +12,7 @@ export const BookSchema = z.object({
   }),
   pages: z.number().int().positive("Pages must be a positive integer"),
   genre: z.string().min(1, "Genre is required"),
-  authorId: z.string(), // Reference the Author schema
+  author_id: z.string(), // Reference the Author schema
   signed: z.boolean(),
   format: z.string().min(1, "Format is required"),
   edition: z.string().min(1, "Edition is required"),
@@ -21,6 +21,7 @@ export const BookSchema = z.object({
   title: z.string().min(1, "Title is required"),
   price: z.number().int().positive("Price must be a positive number"),
   description: z.string().min(1, "Description about the book is required"),
+  bookImageUrl: z.string().optional(),
 });
 
 // TypeScript Type for Book
@@ -30,7 +31,7 @@ export type BookInferSchema = z.infer<typeof BookSchema>;
 export type BookFormState =
   | {
       errors?: {
-        ISBN?: string[];
+        isbn?: string[];
         length?: string[];
         width?: string[];
         height?: string[];
@@ -38,7 +39,7 @@ export type BookFormState =
         publicationDate?: string[];
         pages?: string[];
         genre?: string[];
-        authorId?: string[];
+        author_id?: string[];
         signed?: string[];
         format?: string[];
         edition?: string[];
@@ -47,6 +48,7 @@ export type BookFormState =
         title?: string[];
         price?: string[];
         description?:string[];
+        bookImageUrl?: string[];
       };
       message?: string;
     }
