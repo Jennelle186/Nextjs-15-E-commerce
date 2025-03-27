@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Book, BookListComponentProps } from "../admin/books/bookComponent";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Check, Minus, Plus, ShoppingCart, X } from "lucide-react";
+import { Check, Info, Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { BookDetailsModal } from "./book-details";
 const pacifico = Pacifico({
   subsets: ["latin"],
   weight: ["400"],
@@ -41,7 +42,8 @@ type cartItemType = Book & { quantity: number };
 const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
   const { toast } = useToast();
   const router = useRouter();
-
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [genre, setSelectedGenre] = useState<string[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<cartItemType[]>(() => {
@@ -55,6 +57,12 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
 
   // Save cart items to localStorage on change
   useEffect(() => {
+    const syncedQuantities: Record<string, number> = {};
+    cartItems.forEach((item) => {
+      syncedQuantities[item.isbn] = item.quantity;
+    });
+    setQuantities(syncedQuantities);
+
     if (typeof window !== "undefined") {
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
     }
@@ -62,13 +70,19 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
 
   if (!books) return <p>No books found.</p>;
 
-  const filteredBooks = genre.length
-    ? books.filter((book) => genre.includes(book.genre))
-    : books;
+  const filteredBooks = books.filter(
+    (book) =>
+      book.stocks !== 0 && (genre.length ? genre.includes(book.genre) : true)
+  );
 
   //add to cart
-  const addToCart = (book: Book) => {
-    const quantityToAdd = quantities[book.isbn] || 1;
+  const addToCart = (book: Book, incomingQty?: number) => {
+    // const quantityToAdd = incomingQty ?? quantities[book.isbn] ?? 1;
+    const quantityToAdd =
+      incomingQty ??
+      quantities[book.isbn] ??
+      cartItems.find((item) => item.isbn === book.isbn)?.quantity ??
+      1;
 
     // If stocks are 0, prevent adding to cart
     if (book.stocks === 0) {
@@ -106,6 +120,10 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
     } else {
       // Add new item
       setCartItems([...cartItems, { ...book, quantity: quantityToAdd }]);
+
+      //shows the cart when an item is added
+      setIsCartOpen(true);
+      setTimeout(() => setIsCartOpen(false), 3000);
     }
 
     // Reset quantity selector
@@ -172,6 +190,7 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
     }));
   };
 
+  //check if book is already in cart
   const isInCart = (bookId: string) =>
     cartItems.some((item) => item.isbn === bookId);
 
@@ -183,6 +202,23 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
 
   //number of items or books that were added in the cart
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  //handleBookChange when clicking on the specific book to view all the details in the modal
+
+  const openBookDetails = (book: Book) => {
+    setSelectedBook(book);
+    setIsModalOpen(true);
+  };
+
+  const handleBookChange = (book: Book) => {
+    setSelectedBook(book);
+  };
+
+  //checkout function
+  const handleCheckout = () => {
+    setIsCartOpen(false);
+    router.push("/checkout");
+  };
 
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 md:px-6">
@@ -256,11 +292,26 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
                 height={450}
                 priority={false}
               />
+              <Button
+                variant="secondary"
+                size="icon"
+                className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openBookDetails(book);
+                }}
+                aria-label={`View details for ${book.title}`}
+              >
+                <Info className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* Book details */}
             <div className="p-3 flex flex-col">
-              <div className="mb-2">
+              <div
+                className="mb-2 cursor-pointer"
+                onClick={() => openBookDetails(book)}
+              >
                 <h3 className="font-medium text-sm line-clamp-1">
                   {book.title}
                 </h3>
@@ -308,6 +359,7 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
                 </div>
               </div>
 
+              {/* Add to cart button - Always visible */}
               <Button
                 size="sm"
                 className={cn(
@@ -316,15 +368,11 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
                     ? "bg-green-500 hover:bg-green-600 text-white"
                     : "bg-gradient-to-r from-indigo-300 to-rose-300 hover:from-indigo-400 hover:to-rose-400"
                 )}
-                onClick={() =>
-                  isInCart(book.isbn)
-                    ? removeFromCart(book.isbn)
-                    : addToCart(book)
-                }
+                onClick={() => addToCart(book)} // ✅ Always add, even if already in cart
               >
                 {isInCart(book.isbn) ? (
                   <>
-                    <Check className="mr-2 h-4 w-4" /> Added to Cart
+                    <Check className="mr-2 h-4 w-4" /> Add More to Cart
                   </>
                 ) : (
                   <>
@@ -498,9 +546,7 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
                 <Button
                   className="w-full mt-4 bg-gradient-to-r from-indigo-300 to-rose-300 hover:from-indigo-400 hover:to-rose-400"
                   onClick={() => {
-                    localStorage.removeItem("cartItems");
-                    setCartItems([]);
-                    router.push("/checkout"); // navigate to your checkout page
+                    handleCheckout();
                   }}
                 >
                   Checkout
@@ -518,6 +564,18 @@ const BrowseBooksComponent = ({ books }: BookListComponentProps) => {
           onClick={() => setIsCartOpen(false)}
         />
       )}
+
+      {/* Book Details Modal */}
+      <BookDetailsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        book={selectedBook}
+        books={filteredBooks}
+        onAddToCart={addToCart}
+        isInCart={isInCart}
+        cartItems={cartItems.map((item) => ({ ...item, isbn: item.isbn }))}
+        onBookChange={handleBookChange}
+      />
     </div>
   );
 };

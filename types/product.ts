@@ -6,7 +6,7 @@ export interface Author {
   }
 
   export interface Book {
-    ISBN: string;
+    isbn: string;
     length: number;
     width: number;
     height: number;
