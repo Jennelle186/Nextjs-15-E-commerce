@@ -1,42 +1,41 @@
-export type OrderStatus = 
-    | 'pending'
-    | 'processing'
-    | 'paid'
-    | 'shipped'
-    | 'delivered'
-    | 'cancelled';
-
-export interface OrderItem {
-    productId: string;
-    name: string;
+export type OrderItem = {
+    order_items_id: string;
+    order_id: string;
+    isbn: string;
     quantity: number;
-    price: number;
-    image?: string;
-}
-
-export interface Order {
-    id: string;
-    userId: string;
-    items: OrderItem[];
+    price: number
+    books?: {
+      title: string;
+      bookImageUrl: string;
+      description: string;
+      authors: {
+        firstName: string;
+        lastName: string;
+      };
+    };
+  };
+  
+  type Order = {
+    order_id: string;
+    created_at: string;
+    user_id: string;
+    delivery_options: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    street: string;
+    city: string;
+    province: string;
+    country: string
+    postalCode: string;
+    notes: string
+    status: string;
     total: number;
-    status: OrderStatus;
-    createdAt: Date;
-    updatedAt: Date;
-    shippingAddress: {
-        name: string;
-        address: string;
-        city: string;
-        country: string;
-        postalCode: string;
-    };
-    paymentInfo?: {
-        paymentId: string;
-        method: string;
-    };
-}
+    order_items: OrderItem[];
+  };
+  
+  export type OrdersItems = Order[]
 
-export interface OrderHistory {
-    userId: string;
-    orders: Order[];
-    totalOrders: number;
-}
+  

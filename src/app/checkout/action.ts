@@ -9,6 +9,7 @@ import { createClient } from "../../../utils/supabase/server";
 const cartItemSchema = z.object({
   isbn: z.string(),
   quantity: z.number(),
+  price: z.number(),
 });
 
 const cartSchema = z.array(cartItemSchema);
@@ -65,6 +66,12 @@ export async function processCheckout(prevState: FormState | null, formData: For
 
     console.log("Validated Cart Items:", parsedCart.data);
 
+    //total price of the entire cart items
+  const totalPrice: number = parsedCart.data.reduce(
+    (acc: number, item: { price: number; quantity: number }) => acc + item.price * item.quantity,
+    0
+  );
+
 
     // Insert the order into the database
     const { data: orderData, error } = await (await supabase).from("orders").insert([
@@ -82,6 +89,8 @@ export async function processCheckout(prevState: FormState | null, formData: For
         postalCode: data.postalCode,
         country: data.country,
         notes: data.notes || null,
+        status: "processing",
+        total: totalPrice
       },
     ]).select("order_id").single();
 
@@ -98,6 +107,7 @@ export async function processCheckout(prevState: FormState | null, formData: For
       order_id: orderId,
       isbn: item.isbn,
       quantity: item.quantity,
+      price: item.price,
     }));
 
 
