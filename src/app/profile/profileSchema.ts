@@ -13,9 +13,6 @@ export const profileSchema = z.object({
         message: "First name must be at least 2 characters long"
     }),
     middleName : z.string().optional(),
-    email: z.string().email({
-        message: "Invalid email address"
-    }),
     username: z.string().optional(),
     street: z.string().min(1, { message: 'Street is required' }),
     city: z.string().min(1, { message: 'City is required' }),
@@ -27,7 +24,6 @@ export const profileSchema = z.object({
       message: "Postal code must be exactly 4 digits",
     }),
     country: z.string().min(1, { message: 'Country is required' }),
-    avatar_url: z.string().optional(),
     phoneNumber: z
     .string()
     .nonempty({ message: "Phone number is required" })

@@ -23,7 +23,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { updateProfile } from "./action";
 import { toast } from "@/hooks/use-toast";
 
@@ -57,13 +56,10 @@ const ProfileComponent = ({ user }: ProfileProps) => {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      id: user?.id ?? "",
       username: user.username ?? "",
       firstName: user.firstName ?? "",
       middleName: user.middleName ?? "",
       lastName: user.lastName ?? "",
-      email: user.email,
-      avatar_url: user.avatar_url ?? "",
       street: user.street ?? "",
       city: user.city ?? "",
       province: user.province ?? "",
@@ -116,20 +112,6 @@ const ProfileComponent = ({ user }: ProfileProps) => {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {user.avatar_url && (
-                <div className="flex justify-center mb-6">
-                  <Avatar className="h-24 w-24 rounded-full">
-                    <AvatarImage
-                      src={user?.avatar_url ?? ""}
-                      alt={user?.full_name ?? "User avatar"}
-                    />
-                    <AvatarFallback>
-                      {user?.full_name?.[0] ?? "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-              )}
-
               <div className="grid gap-4 sm:grid-cols-3">
                 <FormField
                   control={form.control}

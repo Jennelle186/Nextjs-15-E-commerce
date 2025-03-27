@@ -5,14 +5,12 @@ export async function updateProfile(profileData: {
   firstName: string;
   lastName: string;
   middleName?: string;
-  email: string;
   username?: string;
   street: string;
   city: string;
   province: string;
   postalCode: string;
   country: string;
-  avatar_url?: string;
   phoneNumber: string;
   updated_at?: string;
 }) {
