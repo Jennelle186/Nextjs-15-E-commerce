@@ -170,7 +170,7 @@ export async function updateBook(state: BookFormState, formData: FormData) {
 
   return {
     error: false,
-    message: 'Profile updated successfully',
+    message: 'Book updated successfully',
   };
 
 

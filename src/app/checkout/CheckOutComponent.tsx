@@ -108,7 +108,7 @@ const CheckoutComponent: React.FC<CheckoutComponentProps> = ({ userInfo }) => {
 
       // Redirect to confirmation page after a delay
       setTimeout(() => {
-        router.push("/");
+        router.push("/books");
       }, 5000);
     } else if (state?.message && !state.success) {
       toast({
@@ -203,7 +203,7 @@ const CheckoutComponent: React.FC<CheckoutComponentProps> = ({ userInfo }) => {
         <p className="text-muted-foreground mb-6 max-w-md">
           Your order has been placed successfully.
         </p>
-        <Button onClick={() => router.push("/")}>Continue Shopping</Button>
+        <Button onClick={() => router.push("/books")}>Continue Shopping</Button>
       </motion.div>
     );
   }
