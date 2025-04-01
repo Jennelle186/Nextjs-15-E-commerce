@@ -358,7 +358,7 @@ export default function LandingPage({ books }: BookListComponentProps) {
                 </div>
                 <h3 className="font-medium text-gray-900">{book.title}</h3>
                 <p className="text-sm text-gray-600">
-                  {book.authors.firstName} {book.authors.lastName}
+                  {book.authors?.firstName} {book.authors?.lastName}
                 </p>
                 <p className="mt-2 font-semibold text-indigo-600">
                   ${book.price.toFixed(2)}
