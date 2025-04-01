@@ -361,7 +361,11 @@ export default function LandingPage({ books }: BookListComponentProps) {
                   {book.authors?.firstName} {book.authors?.lastName}
                 </p>
                 <p className="mt-2 font-semibold text-indigo-600">
-                  ${book.price.toFixed(2)}
+                  ₱{" "}
+                  {book.price.toLocaleString("en-PH", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </p>
               </motion.div>
             ))}

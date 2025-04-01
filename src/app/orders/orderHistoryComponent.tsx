@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { OrderList } from "../../../types/orders";
+import { format } from "date-fns";
 
 type OrderHistoryComponentProps = {
   orders: OrderList;
@@ -204,7 +205,9 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Calendar className="h-4 w-4" />
-                            <span>{order.created_at}</span>
+                            <span>
+                              {format(order.created_at, "MMM d, yyyy")}
+                            </span>
                           </div>
                           {order.notes && (
                             <div className="flex items-center gap-1 text-sm text-amber-600">
@@ -335,8 +338,7 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
                   {getStatusBadge(selectedOrder.status as OrderStatus)}
                 </DialogTitle>
                 <DialogDescription>
-                  Placed on {selectedOrder.created_at}
-                  {/* {format(selectedOrder.date, "MMMM d, yyyy")} */}
+                  Placed on: {format(selectedOrder.created_at, "MMMM d, yyyy")}
                 </DialogDescription>
               </DialogHeader>
 
