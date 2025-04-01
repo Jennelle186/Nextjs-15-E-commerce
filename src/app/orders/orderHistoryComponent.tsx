@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   Calendar,
   ChevronRight,
-  Download,
   Package,
   Search,
   StickyNote,
@@ -487,10 +486,6 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Orders
-                </Button>
-                <Button variant="outline">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Invoice
                 </Button>
                 {selectedOrder.status !== "cancelled" && (
                   <Button

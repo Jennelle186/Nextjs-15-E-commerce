@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getStatusBadge, OrderStatus } from "@/components/orderUIComponent";
 import { useToast } from "@/hooks/use-toast";
 import { Order } from "../orderTypes";
@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   Clock,
   CreditCard,
-  Download,
   Loader2,
   MapPin,
   Package,
@@ -27,7 +26,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -56,8 +54,6 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
     undefined
   );
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
-  const invoiceRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!order) {
@@ -95,8 +91,6 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
 
     setIsUpdating(false);
   };
-
-  //download invoice
 
   // Loading state
   if (isLoading) {
@@ -141,25 +135,6 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
               Placed on {format(order.created_at, "MMMM d, yyyy")}
             </p>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            // onClick={downloadInvoice}
-            disabled={isGeneratingInvoice}
-          >
-            {isGeneratingInvoice ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Download className="mr-2 h-4 w-4" />
-                Download Invoice
-              </>
-            )}
-          </Button>
         </div>
       </div>
 
@@ -250,7 +225,6 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
           <TabsTrigger value="details">Order Details</TabsTrigger>
           <TabsTrigger value="customer">Customer Info</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
-          <TabsTrigger value="invoice">Invoice Preview</TabsTrigger>
         </TabsList>
 
         {/* Order Details Tab */}
@@ -468,44 +442,6 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
                 </p>
               )}
             </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Invoice Preview Tab */}
-        <TabsContent value="invoice">
-          <Card>
-            <CardHeader>
-              <CardTitle>Invoice Preview</CardTitle>
-              <CardDescription>
-                Preview the invoice before downloading
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="border rounded-lg p-4 overflow-auto max-h-[70vh]">
-                <div ref={invoiceRef}>
-                  Invoice here
-                  {/* <InvoiceTemplate order={order} companyInfo={companyInfo} /> */}
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button
-                // onClick={downloadInvoice}
-                disabled={isGeneratingInvoice}
-              >
-                {isGeneratingInvoice ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating PDF...
-                  </>
-                ) : (
-                  <>
-                    <Download className="mr-2 h-4 w-4" />
-                    Download PDF
-                  </>
-                )}
-              </Button>
-            </CardFooter>
           </Card>
         </TabsContent>
       </Tabs>
