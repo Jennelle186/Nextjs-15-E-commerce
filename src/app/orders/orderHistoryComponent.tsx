@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { OrdersItems } from "../../../types/orders";
 import { useState } from "react";
 import {
   Card,
@@ -34,7 +33,7 @@ import {
   getStatusIcon,
   itemVariants,
   OrderStatus,
-} from "./orderUIComponent";
+} from "../../components/orderUIComponent";
 import Image from "next/image";
 import {
   Dialog,
@@ -45,16 +44,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { OrderList } from "../../../types/orders";
 
 type OrderHistoryComponentProps = {
-  orders: OrdersItems;
+  orders: OrderList;
 };
 
 const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
   const router = useRouter();
-  const [selectedOrder, setSelectedOrder] = useState<
-    OrdersItems[number] | null
-  >(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderList[number] | null>(
+    null
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -81,7 +81,7 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
       : filteredOrders.filter((order) => order.status === activeTab);
 
   // View order details
-  const viewOrderDetails = (order: OrdersItems[number]) => {
+  const viewOrderDetails = (order: OrderList[number]) => {
     setSelectedOrder(order);
     setIsDialogOpen(true);
   };

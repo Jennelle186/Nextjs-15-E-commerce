@@ -1,3 +1,6 @@
+import { OrderStatus } from "@/components/orderUIComponent";
+
+
 export type OrderItem = {
     order_items_id: string;
     order_id: string;
@@ -31,11 +34,11 @@ export type OrderItem = {
     country: string
     postalCode: string;
     notes: string
-    status: string;
+    status: OrderStatus;
     total: number;
     order_items: OrderItem[];
   };
   
-  export type OrdersItems = Order[]
+  export type OrderList = Order[]
 
   
