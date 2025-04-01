@@ -3,15 +3,12 @@ import { redirect } from "next/navigation";
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AdminStatsCards } from "@/components/Admin/admin-stat-cards";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table";
+import { columns } from "./orders/columns";
+import { fetchAllOrders } from "./orders/action";
 
 const dashboard = async () => {
   const supabasePromise = createClient();
@@ -53,14 +50,14 @@ const dashboard = async () => {
     // Redirect to homepage
   }
 
+  const ordersResponse = await fetchAllOrders();
+  const orders = Array.isArray(ordersResponse) ? ordersResponse : [];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Overview of your store performance and recent activity
-          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button asChild>
@@ -72,84 +69,14 @@ const dashboard = async () => {
         </div>
       </div>
       {/* Stats Cards */}
-      Admin stats card here
-      {/* <AdminStatsCards /> */}
-      {/* Charts and Recent Orders */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Sales Chart */}
-            <Card className="col-span-1 md:col-span-2">
-              <CardHeader>
-                <CardTitle>Sales Overview</CardTitle>
-                <CardDescription>
-                  Monthly sales performance for the current year
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                Admin sales chart here
-                {/* <AdminSalesChart /> */}
-              </CardContent>
-            </Card>
+      <AdminStatsCards />
 
-            {/* Recent Orders */}
-            <Card className="col-span-1 md:col-span-2">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Recent Orders</CardTitle>
-                  <CardDescription>
-                    Latest orders from your customers
-                  </CardDescription>
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/admin/orders">View All</Link>
-                </Button>
-              </CardHeader>
-              <CardContent>
-                {/* <RecentOrdersTable /> */}
-                Recent orders here
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        <TabsContent value="analytics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Analytics</CardTitle>
-              <CardDescription>
-                Detailed analytics will be displayed here
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px] flex items-center justify-center border rounded-md">
-                <p className="text-muted-foreground">
-                  Analytics content coming soon
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="reports" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Reports</CardTitle>
-              <CardDescription>Generate and view reports</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px] flex items-center justify-center border rounded-md">
-                <p className="text-muted-foreground">
-                  Reports content coming soon
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <Card className="space-y-4">
+        <CardHeader className="text-xl font-semibold">All Orders</CardHeader>
+        <CardContent>
+          <DataTable columns={columns} data={orders} />
+        </CardContent>
+      </Card>
     </div>
   );
 };
