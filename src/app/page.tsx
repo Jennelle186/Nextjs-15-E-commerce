@@ -1,15 +1,7 @@
-import FeaturedBooks from "@/components/featuredBooks";
-import BookshopFeatures from "@/components/featureShop";
-import Footer from "@/components/footer";
-import Hero from "@/components/hero";
+import LandingPage from "@/components/landingPage";
+import { fetchAllBooks } from "./books/action";
 
-export default function Home() {
-  return (
-    <div>
-      <Hero />
-      <FeaturedBooks />
-      <BookshopFeatures />
-      <Footer />
-    </div>
-  );
+export default async function Home() {
+  const books = (await fetchAllBooks()) || [];
+  return <LandingPage books={books} />;
 }
