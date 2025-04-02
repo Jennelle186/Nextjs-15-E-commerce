@@ -10,6 +10,7 @@ import {
 import {
   ArrowLeft,
   Calendar,
+  ChevronDown,
   ChevronRight,
   Package,
   Search,
@@ -45,6 +46,15 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { OrderList } from "../../../types/orders";
 import { format } from "date-fns";
+import { useMediaQuery } from "./use-media-query";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type OrderHistoryComponentProps = {
   orders: OrderList;
@@ -59,6 +69,9 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [activeTab, setActiveTab] = useState("all");
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 640px)");
 
   //filter orders based on search query and status filter
   const filteredOrders = orders.filter((order) => {
@@ -104,6 +117,17 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
     );
   }
 
+  // Tab options for dropdown on mobile
+  const tabOptions = [
+    { value: "all", label: "All" },
+    { value: "processing", label: "Processing" },
+    { value: "ready for pick up", label: "Ready for Pick Up" },
+    { value: "picked-up", label: "Picked Up" },
+    { value: "shipped", label: "Shipped" },
+    { value: "delivered", label: "Delivered" },
+    { value: "cancelled", label: "Cancelled" },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Filter and search */}
@@ -117,13 +141,21 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => {
+            setStatusFilter(value);
+            setActiveTab(value); // <- sync tab with status filter
+          }}
+        >
           <SelectTrigger className="w-full md:w-[180px]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="processing">Processing</SelectItem>
+            <SelectItem value="ready for pick up">Ready for Pick Up</SelectItem>
+            <SelectItem value="picked-up">Picked Up</SelectItem>
             <SelectItem value="shipped">Shipped</SelectItem>
             <SelectItem value="delivered">Delivered</SelectItem>
             <SelectItem value="cancelled">Cancelled</SelectItem>
@@ -133,38 +165,56 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5 mb-6">
-          <TabsTrigger
-            value="all"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-300 data-[state=active]:to-rose-300 data-[state=active]:text-white"
-          >
-            All
-          </TabsTrigger>
-          <TabsTrigger
-            value="processing"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-300 data-[state=active]:to-rose-300 data-[state=active]:text-white"
-          >
-            Processing
-          </TabsTrigger>
-          <TabsTrigger
-            value="shipped"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-300 data-[state=active]:to-rose-300 data-[state=active]:text-white"
-          >
-            Shipped
-          </TabsTrigger>
-          <TabsTrigger
-            value="delivered"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-300 data-[state=active]:to-rose-300 data-[state=active]:text-white"
-          >
-            Delivered
-          </TabsTrigger>
-          <TabsTrigger
-            value="cancelled"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-300 data-[state=active]:to-rose-300 data-[state=active]:text-white"
-          >
-            Cancelled
-          </TabsTrigger>
-        </TabsList>
+        {/* Mobile Dropdown for Tabs */}
+        {isMobile ? (
+          <div className="mb-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  {tabOptions.find((tab) => tab.value === activeTab)?.label ||
+                    "All"}
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width]">
+                {tabOptions.map((tab) => (
+                  <DropdownMenuItem
+                    key={tab.value}
+                    onClick={() => setActiveTab(tab.value)}
+                    className={cn(activeTab === tab.value && "bg-muted")}
+                  >
+                    {tab.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ) : (
+          // Tablet and Desktop Tabs
+          <div className="relative mb-6">
+            <ScrollArea className="w-full">
+              <TabsList
+                className={cn(
+                  "inline-flex w-full",
+                  isDesktop ? "grid-cols-7" : "w-max"
+                )}
+              >
+                {tabOptions.map((tab) => (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className={cn(
+                      "px-4 py-2 whitespace-nowrap",
+                      "data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-300 data-[state=active]:to-rose-300 data-[state=active]:text-white"
+                    )}
+                  >
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </ScrollArea>
+          </div>
+        )}
 
         {/* Tabe Content */}
         <TabsContent value={activeTab}>
@@ -351,6 +401,10 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
                       <h3 className="font-medium">
                         {selectedOrder.status === "processing" &&
                           "Your order is being processed"}
+                        {selectedOrder.status === "ready for pick up" &&
+                          "Your order is ready for pick up"}
+                        {selectedOrder.status === "picked-up" &&
+                          "You picked up this order"}
                         {selectedOrder.status === "shipped" &&
                           "Your order has been shipped"}
                         {selectedOrder.status === "delivered" &&
@@ -361,6 +415,10 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
                       <p className="text-sm text-muted-foreground">
                         {selectedOrder.status === "processing" &&
                           "We're preparing your items for shipment"}
+                        {selectedOrder.status === "ready for pick up" &&
+                          "You can now pick up your order at our location"}
+                        {selectedOrder.status === "picked-up" &&
+                          "You have successfully picked up your order"}
                         {selectedOrder.status === "shipped" &&
                           "Your package is on its way to you"}
                         {selectedOrder.status === "delivered" &&

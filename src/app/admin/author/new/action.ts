@@ -39,7 +39,7 @@ export async function addAuthor(state: AuthorFormState, formData: FormData) {
 
   return {
     error: false,
-    message: 'Profile updated successfully',
+    message: 'Author added successfully',
   };
 
 }

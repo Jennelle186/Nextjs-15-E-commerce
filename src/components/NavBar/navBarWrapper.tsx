@@ -13,7 +13,7 @@ export default async function NavbarWrapper() {
     }
 
     //check if user is an admin
-    const { data: profileData, error: profileError } = await supabase
+    const { data: profileData } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", session?.user.id)

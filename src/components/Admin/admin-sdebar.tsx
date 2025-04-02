@@ -10,9 +10,7 @@ import {
   ShoppingCart,
   Users,
   BookOpen,
-  Settings,
   Menu,
-  X,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,11 +46,6 @@ const navItems: NavItem[] = [
     href: "/admin/books",
     icon: <BookOpen className="h-5 w-5" />,
   },
-  {
-    title: "Settings",
-    href: "/admin/settings",
-    icon: <Settings className="h-5 w-5" />,
-  },
 ];
 
 export function AdminSidebar() {
@@ -82,15 +75,8 @@ export function AdminSidebar() {
                     onClick={() => setOpen(false)}
                   >
                     <BookOpen className="h-5 w-5" />
-                    <span className="font-bold">BookWorm Admin</span>
+                    <span className="font-bold">BookHaven Admin</span>
                   </Link>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setOpen(false)}
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
                 </div>
               </div>
               <ScrollArea className="flex-1">
@@ -112,6 +98,10 @@ export function AdminSidebar() {
                         {item.title}
                       </Link>
                     ))}
+                    <div className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted">
+                      <LogOut className="h-5 w-5" />
+                      <LogoutButton />
+                    </div>
                   </nav>
                 </div>
               </ScrollArea>

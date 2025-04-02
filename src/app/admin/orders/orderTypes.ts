@@ -53,7 +53,7 @@ export type Order = {
   country: string;
   postalCode: string;
   notes: string;
-  status: "processing" | "shipped" | "delivered" | "cancelled"; // adjust as needed
+  status: "processing" | "shipped" | "delivered" | "cancelled" | "ready for pick up" | "picked-up"; // adjust as needed
   total: number;
   order_items: OrderItem[];
 };

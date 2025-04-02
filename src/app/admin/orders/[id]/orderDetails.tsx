@@ -114,8 +114,6 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
     );
   }
 
-  console.log(order, "order details");
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -158,8 +156,19 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="processing">Processing</SelectItem>
-                  <SelectItem value="shipped">Shipped</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
+                  {order.delivery_options.toLowerCase() === "pickup" ? (
+                    <>
+                      <SelectItem value="ready for pick up">
+                        Ready for Pick Up
+                      </SelectItem>
+                      <SelectItem value="picked-up">Picked Up</SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="shipped">Shipped</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                    </>
+                  )}
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
@@ -187,6 +196,12 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
               {order.status === "processing" && (
                 <Clock className="h-5 w-5 text-blue-500" />
               )}
+              {order.status === "ready for pick up" && (
+                <Package className="h-5 w-5 text-yellow-500" />
+              )}
+              {order.status === "picked-up" && (
+                <CheckCircle2 className="h-5 w-5 text-purple-500" />
+              )}
               {order.status === "shipped" && (
                 <Truck className="h-5 w-5 text-amber-500" />
               )}
@@ -199,19 +214,25 @@ const OrderDetailsComponent = ({ orders }: OrderDetailsComponentProps) => {
               <div>
                 <h3 className="font-medium">
                   {order.status === "processing" && "Order is being processed"}
+                  {order.status === "ready for pick up" && "Ready for Pick Up"}
+                  {order.status === "picked-up" && "Order was picked up"}
                   {order.status === "shipped" && "Order has been shipped"}
                   {order.status === "delivered" && "Order has been delivered"}
                   {order.status === "cancelled" && "Order has been cancelled"}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {order.status === "processing" &&
-                    "The order is being prepared for shipment"}
+                    "The order is being prepared."}
+                  {order.status === "ready for pick up" &&
+                    "The order is ready and awaiting pickup."}
+                  {order.status === "picked-up" &&
+                    "The customer has picked up the order."}
                   {order.status === "shipped" &&
-                    "The package is on its way to the customer"}
+                    "The package is on its way to the customer."}
                   {order.status === "delivered" &&
-                    "The order was delivered successfully"}
+                    "The order was delivered successfully."}
                   {order.status === "cancelled" &&
-                    "This order has been cancelled"}
+                    "This order has been cancelled."}
                 </p>
               </div>
             </div>

@@ -13,6 +13,7 @@ import {
   Eye,
   MoreHorizontal,
   Truck,
+  Package,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -67,13 +68,12 @@ export const columns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const deliveryOption = row.getValue("delivery_options") as string;
 
-      // Format the value
       const formattedOption =
         deliveryOption.toLowerCase() === "cod"
           ? "COD (Cash-on-Delivery)"
           : deliveryOption
               .toLowerCase()
-              .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letters
+              .replace(/\b\w/g, (char) => char.toUpperCase());
 
       return <span>{formattedOption}</span>;
     },
@@ -125,6 +125,8 @@ export const columns: ColumnDef<Order>[] = [
     id: "actions",
     cell: ({ row }) => {
       const order = row.original;
+      const isPickup = order.delivery_options?.toLowerCase() === "pickup";
+
       return (
         <div className="flex justify-end">
           <Button size="icon" variant="ghost" asChild>
@@ -150,6 +152,8 @@ export const columns: ColumnDef<Order>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuLabel>Change Status</DropdownMenuLabel>
+
+              {/* Status options based on delivery method */}
               <DropdownMenuItem
                 onClick={() => updateOrderStatus(order.order_id, "processing")}
                 disabled={order.status === "processing"}
@@ -157,20 +161,49 @@ export const columns: ColumnDef<Order>[] = [
                 <Clock className="h-4 w-4 mr-2 text-blue-500" />
                 Mark as Processing
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => updateOrderStatus(order.order_id, "shipped")}
-                disabled={order.status === "shipped"}
-              >
-                <Truck className="h-4 w-4 mr-2 text-amber-500" />
-                Mark as Shipped
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => updateOrderStatus(order.order_id, "delivered")}
-                disabled={order.status === "delivered"}
-              >
-                <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
-                Mark as Delivered
-              </DropdownMenuItem>
+
+              {isPickup ? (
+                <>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      updateOrderStatus(order.order_id, "ready for pick up")
+                    }
+                    disabled={order.status === "ready for pick up"}
+                  >
+                    <Package className="h-4 w-4 mr-2 text-yellow-500" />
+                    Mark as Ready for Pick Up
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      updateOrderStatus(order.order_id, "picked-up")
+                    }
+                    disabled={order.status === "picked-up"}
+                  >
+                    <CheckCircle2 className="h-4 w-4 mr-2 text-purple-500" />
+                    Mark as Picked Up
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem
+                    onClick={() => updateOrderStatus(order.order_id, "shipped")}
+                    disabled={order.status === "shipped"}
+                  >
+                    <Truck className="h-4 w-4 mr-2 text-amber-500" />
+                    Mark as Shipped
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      updateOrderStatus(order.order_id, "delivered")
+                    }
+                    disabled={order.status === "delivered"}
+                  >
+                    <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
+                    Mark as Delivered
+                  </DropdownMenuItem>
+                </>
+              )}
+
               <DropdownMenuItem
                 onClick={() => updateOrderStatus(order.order_id, "cancelled")}
                 disabled={order.status === "cancelled"}

@@ -70,7 +70,7 @@ export async function updateAuthor(state: AuthorFormState, formData: FormData) {
 
   return {
     error: false,
-    message: 'Profile updated successfully',
+    message: 'Author updated successfully',
   };
 
 }

@@ -1,8 +1,22 @@
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle2, Clock, Package, Truck } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Package,
+  PackageCheck,
+  ShoppingBag,
+  Truck,
+} from "lucide-react";
 
 // Define order status types
-export type OrderStatus = "processing" | "shipped" | "delivered" | "cancelled";
+export type OrderStatus =
+  | "processing"
+  | "ready for pick up"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+  | "picked-up";
 
 // Get status badge color
 export const getStatusBadge = (status: OrderStatus) => {
@@ -43,6 +57,24 @@ export const getStatusBadge = (status: OrderStatus) => {
           Cancelled
         </Badge>
       );
+    case "ready for pick up":
+      return (
+        <Badge
+          variant="outline"
+          className="bg-yellow-50 text-yellow-600 border-yellow-200"
+        >
+          Ready for Pick Up
+        </Badge>
+      );
+    case "picked-up":
+      return (
+        <Badge
+          variant="outline"
+          className="bg-purple-50 text-purple-600 border-purple-200"
+        >
+          Picked-up
+        </Badge>
+      );
     default:
       return <Badge variant="outline">Unknown</Badge>;
   }
@@ -53,12 +85,16 @@ export const getStatusIcon = (status: OrderStatus) => {
   switch (status) {
     case "processing":
       return <Clock className="h-5 w-5 text-blue-500" />;
+    case "ready for pick up":
+      return <PackageCheck className="h-5 2-5 text-yellow-400" />;
     case "shipped":
       return <Truck className="h-5 w-5 text-amber-500" />;
     case "delivered":
       return <CheckCircle2 className="h-5 w-5 text-green-500" />;
     case "cancelled":
       return <AlertCircle className="h-5 w-5 text-red-500" />;
+    case "picked-up":
+      return <ShoppingBag className="h-5 w-5 text-purple-500" />;
     default:
       return <Package className="h-5 w-5" />;
   }
