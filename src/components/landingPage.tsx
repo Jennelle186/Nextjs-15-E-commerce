@@ -173,9 +173,9 @@ export default function LandingPage({ books }: BookListComponentProps) {
     },
     {
       icon: <Users className="h-6 w-6 text-rose-500" />,
-      title: "Community Reviews",
+      title: "Seamless Experience",
       description:
-        "Make informed choices with honest reviews from our passionate reading community.",
+        "Enjoy a smooth, user-friendly platform designed for every kind of reader.",
     },
     {
       icon: <Clock className="h-6 w-6 text-amber-500" />,
@@ -206,7 +206,7 @@ export default function LandingPage({ books }: BookListComponentProps) {
     },
   ];
 
-  const filteredBooks = books.filter((book) => book.stocks !== 0);
+  const filteredBooks = books.filter((book) => book.stocks !== 0).slice(0, 4);
   return (
     <div className="relative w-full overflow-hidden bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
@@ -312,14 +312,6 @@ export default function LandingPage({ books }: BookListComponentProps) {
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-gray-300 text-gray-700 hover:bg-gray-50"
-              >
-                Learn More
-              </Button>
             </motion.div>
           </div>
         </div>

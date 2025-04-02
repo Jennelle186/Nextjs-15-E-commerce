@@ -40,44 +40,36 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/about-us"
                   className="hover:text-white transition-colors"
                 >
                   About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="hover:text-white transition-colors"
-                >
-                  Contacy Us
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Company</h3>
+            <h3 className="font-semibold mb-4">Follow Us</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  About Us
+                  Facebook
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Contact
+                  Twitter
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Careers
+                  Instagram
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white transition-colors">
-                  Press
+                  LinkedIn
                 </Link>
               </li>
             </ul>
@@ -87,22 +79,18 @@ export default function Footer() {
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Help Center
-                </Link>
+                <a
+                  href="mailto:ceedjenn@gmail.com"
+                  className="hover:text-white transition-colors"
+                >
+                  Contact Us
+                </a>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Shipping
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Returns
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
+                <Link
+                  href="/privacy-policy"
+                  className="hover:text-white transition-colors"
+                >
                   Privacy Policy
                 </Link>
               </li>
