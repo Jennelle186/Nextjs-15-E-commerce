@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./orders/columns";
 import { fetchAllOrders } from "./orders/action";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const dashboard = async () => {
   const supabasePromise = createClient();
@@ -54,30 +56,32 @@ const dashboard = async () => {
   const orders = Array.isArray(ordersResponse) ? ordersResponse : [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+    <Suspense fallback={<Skeleton />}>
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button asChild>
+              <Link href="/admin/orders">
+                View All Orders
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button asChild>
-            <Link href="/admin/orders">
-              View All Orders
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </div>
-      {/* Stats Cards */}
-      <AdminStatsCards />
+        {/* Stats Cards */}
+        <AdminStatsCards />
 
-      <Card className="space-y-4">
-        <CardHeader className="text-xl font-semibold">All Orders</CardHeader>
-        <CardContent>
-          <DataTable columns={columns} data={orders} />
-        </CardContent>
-      </Card>
-    </div>
+        <Card className="space-y-4">
+          <CardHeader className="text-xl font-semibold">All Orders</CardHeader>
+          <CardContent>
+            <DataTable columns={columns} data={orders} />
+          </CardContent>
+        </Card>
+      </div>
+    </Suspense>
   );
 };
 

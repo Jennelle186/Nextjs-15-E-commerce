@@ -70,6 +70,12 @@ export default function Navbar({ session }: { session: Session | null }) {
         (item) =>
           item.href === "/" || item.href === "/books" || item.href === "/about"
       );
+
+  // Hide navbar on /login and /sign-up
+  if (pathname === "/login" || pathname === "/sign-up") {
+    return null;
+  }
+
   return (
     <motion.header
       initial={{ y: -100 }}

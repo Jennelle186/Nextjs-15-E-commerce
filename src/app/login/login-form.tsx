@@ -25,6 +25,22 @@ import { useRouter } from "next/navigation";
 import GoogleSignIn from "./google";
 import { loginSchema } from "./loginSchema";
 
+import { motion } from "framer-motion";
+import { itemVariants } from "@/components/framerMotionComponents";
+
+const formVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
 export function LoginForm({
   className,
 }: React.ComponentPropsWithoutRef<"form">) {
@@ -74,99 +90,101 @@ export function LoginForm({
   const email = form.getValues("email");
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className={cn("flex flex-col gap-6", className)}
-      >
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold">Login to your account</h1>
-          <p className="text-balance text-sm text-muted-foreground">
-            Enter your email below to login to your account
-          </p>
-        </div>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={formVariants}
+      className="space-y-6"
+    >
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className={cn("flex flex-col gap-6 space-y-4", className)}
+        >
+          <motion.div variants={itemVariants} className="space-y-2">
+            {" "}
+            <div className="grid gap-6">
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </motion.div>
+          {/* Email */}
 
-        {/* Email */}
-        <div className="grid gap-6">
-          <div className="grid gap-2">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+          <motion.div variants={itemVariants}>
+            <div className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Sign in"
               )}
-            />
+            </Button>
+          </motion.div>
+
+          <div className="flex justify-center">
+            <Link
+              href={`/forgot-password${
+                email ? `?email=${encodeURIComponent(email)}` : ""
+              }`}
+              className="text-sm underline-offset-4 hover:underline"
+            >
+              Forgot Password?
+            </Link>
           </div>
-        </div>
 
-        <div className="grid gap-2">
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Enter your password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+          <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+            <span className="relative z-10 bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
 
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Please wait
-            </>
-          ) : (
-            "Login"
-          )}
-        </Button>
+          <GoogleSignIn />
 
-        <div className="flex justify-center">
-          <Link
-            href={`/forgot-password${
-              email ? `?email=${encodeURIComponent(email)}` : ""
-            }`}
-            className="text-sm underline-offset-4 hover:underline"
-          >
-            Forgot Password?
-          </Link>
-        </div>
-
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-
-        {/* <Button variant="outline" className="w-full">
-          <MailIcon />
-          Login with Gmail
-        </Button> */}
-
-        <GoogleSignIn />
-
-        <div className="text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/sign-up" className="underline underline-offset-4">
-            Sign up
-          </Link>
-        </div>
-      </form>
-    </Form>
+          <div className="text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/sign-up" className="underline underline-offset-4">
+              Sign up
+            </Link>
+          </div>
+        </form>
+      </Form>
+    </motion.div>
   );
 }
