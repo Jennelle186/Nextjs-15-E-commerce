@@ -141,13 +141,17 @@ const BookForm: React.FC<BookFormProps> = ({ authors }) => {
                             type="date"
                             {...field}
                             value={
-                              field.value
+                              field.value instanceof Date &&
+                              !isNaN(field.value.getTime())
                                 ? field.value.toISOString().split("T")[0]
                                 : ""
                             }
-                            onChange={(e) =>
-                              field.onChange(new Date(e.target.value))
-                            }
+                            onChange={(e) => {
+                              const dateValue = e.target.value
+                                ? new Date(e.target.value)
+                                : null;
+                              field.onChange(dateValue);
+                            }}
                           />
                         </FormControl>
                         {state?.errors?.publicationDate && (
