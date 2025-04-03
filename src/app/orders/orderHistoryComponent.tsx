@@ -10,7 +10,6 @@ import {
 import {
   ArrowLeft,
   Calendar,
-  ChevronDown,
   ChevronRight,
   Package,
   Search,
@@ -47,12 +46,6 @@ import { Separator } from "@/components/ui/separator";
 import { OrderList } from "../../../types/orders";
 import { format } from "date-fns";
 import { useMediaQuery } from "./use-media-query";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -167,28 +160,7 @@ const OrderHistoryComponent = ({ orders }: OrderHistoryComponentProps) => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         {/* Mobile Dropdown for Tabs */}
         {isMobile ? (
-          <div className="mb-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  {tabOptions.find((tab) => tab.value === activeTab)?.label ||
-                    "All"}
-                  <ChevronDown className="h-4 w-4 ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width]">
-                {tabOptions.map((tab) => (
-                  <DropdownMenuItem
-                    key={tab.value}
-                    onClick={() => setActiveTab(tab.value)}
-                    className={cn(activeTab === tab.value && "bg-muted")}
-                  >
-                    {tab.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <>{/* Do not show anything in small screens  */}</>
         ) : (
           // Tablet and Desktop Tabs
           <div className="relative mb-6">
