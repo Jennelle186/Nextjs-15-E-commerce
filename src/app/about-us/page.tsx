@@ -81,38 +81,6 @@ function ElegantShape({
   );
 }
 
-function TeamMember({
-  name,
-  role,
-  image,
-  index,
-}: {
-  name: string;
-  role: string;
-  image: string;
-  index: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-      className="text-center"
-    >
-      <div className="relative w-48 h-48 mx-auto mb-4 rounded-full overflow-hidden border-4 border-white shadow-md">
-        <Image
-          src={image || "/placeholder.svg"}
-          alt={name}
-          fill
-          className="object-cover"
-        />
-      </div>
-      <h3 className="text-xl font-semibold mb-1">{name}</h3>
-      <p className="text-gray-600">{role}</p>
-    </motion.div>
-  );
-}
-
 function ValueCard({
   icon,
   title,
@@ -178,29 +146,6 @@ export default function AboutUs() {
       title: "Global Perspective",
       description:
         "We celebrate diverse voices and perspectives, offering literature from around the world to broaden horizons.",
-    },
-  ];
-
-  const team = [
-    {
-      name: "Elena Rodriguez",
-      role: "Founder & CEO",
-      image: "/placeholder.svg?height=300&width=300",
-    },
-    {
-      name: "Marcus Chen",
-      role: "Head of Curation",
-      image: "/placeholder.svg?height=300&width=300",
-    },
-    {
-      name: "Sophia Williams",
-      role: "Customer Experience",
-      image: "/placeholder.svg?height=300&width=300",
-    },
-    {
-      name: "James Thompson",
-      role: "Operations Manager",
-      image: "/placeholder.svg?height=300&width=300",
     },
   ];
 
@@ -317,7 +262,7 @@ export default function AboutUs() {
               className="relative h-[400px] rounded-xl overflow-hidden shadow-xl"
             >
               <Image
-                src="/placeholder.svg?height=800&width=600"
+                src="/book-shelf.jpg"
                 alt="BookHaven Store"
                 fill
                 className="object-cover"
@@ -354,29 +299,20 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Our Team Section */}
+      {/* Project Credits Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-              Meet Our Team
+              About This Project
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              The passionate individuals behind BookHaven who work tirelessly to
-              bring you the best literary experience.
+              This e-commerce web application, BookHaven, was developed by Ceed
+              Jennelle B. Lorenzo as part of the MIT 105: System Development
+              course. It showcases a fully functional book browsing and shopping
+              experience with a focus on modern design, responsive layout, and
+              seamless user interaction.
             </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, index) => (
-              <TeamMember
-                key={index}
-                name={member.name}
-                role={member.role}
-                image={member.image}
-                index={index}
-              />
-            ))}
           </div>
         </div>
       </section>
