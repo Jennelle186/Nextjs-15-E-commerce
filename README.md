@@ -1,36 +1,175 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 BookHaven
 
-## Getting Started
+A modern full-stack e-commerce bookstore built with **Next.js**, **Supabase**, **Tailwind CSS**, and **shadcn/ui**. The application provides a seamless online shopping experience while allowing administrators to efficiently manage books, inventory, and customer orders.
 
-First, run the development server:
+---
+
+# Features
+
+### Customer Features
+
+* Secure user authentication
+* Browse and search books
+* Category filtering
+* Product detail pages
+* Shopping cart
+* Order placement
+* Order history
+* Responsive user interface
+
+### Administrator Features
+
+* Dashboard overview
+* Product management (Create, Update, Delete)
+* Category management
+* Inventory management
+* Order management
+* Customer order monitoring
+
+---
+
+# Technology Stack
+
+## Frontend
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* shadcn/ui
+* Radix UI
+
+## Backend
+
+* Supabase
+* PostgreSQL
+* Supabase Authentication
+* Supabase Storage
+
+---
+
+# Architecture
+
+```
+                User
+                  │
+                  ▼
+          Next.js Frontend
+                  │
+                  ▼
+             Supabase API
+        ┌─────────┼─────────┐
+        │         │         │
+        ▼         ▼         ▼
+ PostgreSQL   Authentication  Storage
+```
+
+The application follows a modern full-stack architecture where Next.js handles the user interface and routing, while Supabase provides authentication, database services, and file storage.
+
+---
+
+# Core Features
+
+* Authentication using Supabase Auth
+* Role-based access control
+* Product catalog management
+* Shopping cart functionality
+* Order processing workflow
+* Inventory tracking
+* Responsive design for desktop and mobile
+* Server-side rendering using Next.js
+
+---
+
+# Project Structure
+
+```
+app/
+components/
+hooks/
+lib/
+public/
+styles/
+types/
+
+README.md
+package.json
+```
+
+---
+
+# Getting Started
+
+## Prerequisites
+
+* Node.js 18+
+* npm
+* Supabase Project
+
+## Installation
+
+```bash
+git clone https://github.com/yourusername/bookhaven.git
+
+cd bookhaven
+
+npm install
+```
+
+Create a `.env.local` file.
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Run the development server.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# Learning Outcomes
 
-To learn more about Next.js, take a look at the following resources:
+This project demonstrates experience in:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* Full-Stack Web Development
+* Modern React Development
+* Next.js App Router
+* Authentication & Authorization
+* PostgreSQL Database Design
+* Responsive UI Development
+* Component-Based Architecture
+* CRUD Operations
+* State Management
+* RESTful Data Integration
+* UI/UX Design
+* Git Version Control
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+# Future Improvements
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* Payment gateway integration
+* Wishlist functionality
+* Product reviews and ratings
+* Email notifications
+* Sales analytics dashboard
+* Recommendation engine
+* Coupon and discount system
+* Multi-vendor support
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+# License
+
+This project was developed for educational and portfolio purposes.
